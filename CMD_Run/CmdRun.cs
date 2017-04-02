@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace CMD_Run
 {
-    class Program
+    public class CmdRun
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
+            
         }
     }
 }
