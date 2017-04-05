@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,8 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CmdRun.cs" />
-    <Compile Include="Engine\GameCycleEvents.cs" />
-    <Compile Include="Engine\GameTime.cs" />
+    <Compile Include="Engine\GameTimer.cs" />
+    <Compile Include="Engine\InputListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

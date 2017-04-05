@@ -1,28 +1,29 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CMD_Run.Engine
 {
-    public class GameTime
+    public class GameTimer
     {
         private int cycleLength = 300;
 
         /// <summary>
         /// Wird aufgerufen, wenn der aktuelle Spieldurchlauf beendet ist
         /// </summary>
-        public event GameCycleFinishedHandler OnGameCycleFinished;
+        public event EventHandler<EventArgs> OnGameCycleFinished;
         /// <summary>
         /// Wird aufgerufen, wenn der aktuelle Spieldurchlauf beendet ist
         /// </summary>
-        public event GameCycleStartedHandler OnGameCycleStarted;
+        public event EventHandler<EventArgs> OnGameCycleStarted;
         /// <summary>
         /// Wird aufgerufen, wenn die Spielschleife gestartet wird
         /// </summary>
-        public event GameStartedHandler OnGameStarted;
+        public event EventHandler<EventArgs> OnGameStarted;
         /// <summary>
         /// Wird aufgerufen, wenn die Spielschleife gestoppt wird
         /// </summary>
-        public event GameStoppedHandler OnGameStopped;
+        public event EventHandler<EventArgs> OnGameStopped;
 
         /// <summary>
         /// Länge der Sleep-Dauer jedes Spieldurchlaufs in Milliseknuden
@@ -51,12 +52,15 @@ namespace CMD_Run.Engine
         {
             RunGameCycle = true;
             OnGameStarted?.Invoke(this, new EventArgs());
-            while(RunGameCycle)
+            Task.Run(() =>
             {
-                OnGameCycleStarted?.Invoke(this, new EventArgs());
-                Thread.Sleep(cycleLength);
-                OnGameCycleFinished?.Invoke(this, new EventArgs());
-            }
+                while (RunGameCycle)
+                {
+                    OnGameCycleStarted?.Invoke(this, new EventArgs());
+                    Thread.Sleep(cycleLength);
+                    OnGameCycleFinished?.Invoke(this, new EventArgs());
+                }
+            });
             OnGameStopped?.Invoke(this, new EventArgs());
         }
 

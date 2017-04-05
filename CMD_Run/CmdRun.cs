@@ -9,11 +9,13 @@ namespace CMD_Run
 {
     public class CmdRun
     {
-        private static GameTime timer = null;
 
         private static void Main(string[] args)
         {
-            /*
+            InputListener = new InputListener();
+            InputListener.Start();
+
+            /* Testcode zum Rendern des Levels
             int width = 4096;
             int height = 10;
             Random rnd = new Random();
@@ -57,19 +59,13 @@ namespace CMD_Run
         }
 
         /// <summary>
-        /// Started die Spielschleife
+        /// Timer für die Spielschleife
         /// </summary>
-        public static void StartGame()
-        {
-            timer.Start();
-        }
-
+        public static GameTimer GameTimer { get; private set; }
+        
         /// <summary>
-        /// Stoppt die Spielschleife
+        /// Listener für Tastatureingaben
         /// </summary>
-        public static void StopGame()
-        {
-            timer.Stop();
-        }
+        public static InputListener InputListener { get; private set; }
     }
 }
