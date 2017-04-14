@@ -13,7 +13,7 @@ namespace CMD_Run
         private static void Main(string[] args)
         {
             InputListener = new InputListener();
-            InputListener.OnKeyDown += (object sender, KeyTypedEventArgs e) =>
+           InputListener.OnKeyDown += (object sender, KeyTypedEventArgs e) =>
             {
                 Console.WriteLine("hit " + e.KeyCode);
             };
@@ -21,7 +21,7 @@ namespace CMD_Run
             InputListener.Run();
             InputListener.Stop();
         }
-
+        
         /// <summary>
         /// Timer für die Spielschleife
         /// </summary>
