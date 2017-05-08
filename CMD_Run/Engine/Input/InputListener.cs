@@ -21,6 +21,7 @@ namespace CMD_Run.Engine
         public void Start()
         {
             hookId = KeyboardInterceptor.SetHook(ProcessMessage);
+            Run();
         }
 
         /// <summary>

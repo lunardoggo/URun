@@ -12,13 +12,11 @@ namespace CMD_Run
         [STAThread()]
         private static void Main(string[] args)
         {
+            GameTimer = new GameTimer();
+            GameTimer.Start();
+
             InputListener = new InputListener();
-           InputListener.OnKeyDown += (object sender, KeyTypedEventArgs e) =>
-            {
-                Console.WriteLine("hit " + e.KeyCode);
-            };
             InputListener.Start();
-            InputListener.Run();
             InputListener.Stop();
         }
         
