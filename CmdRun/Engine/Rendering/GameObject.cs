@@ -33,7 +33,7 @@ namespace CmdRun.Engine.Rendering
         /// </summary>
         public void Initialize(IShape shape)
         {
-            if(shape is null)
+            if(shape == null)
             {
                 throw new NullReferenceException("Shape of GameObject cannot be \"null\"!");
             }
