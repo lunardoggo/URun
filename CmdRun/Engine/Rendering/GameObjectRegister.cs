@@ -15,7 +15,7 @@ namespace CmdRun.Engine.Rendering
         {
             get
             {
-                if(instance is null)
+                if(instance == null)
                 {
                     instance = new GameObjectRegister();
                 }
