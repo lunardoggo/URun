@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour {
     public Text healthText;
     public Text coinsText;
     public Text powerUpText;
+    public Text mainCoinText;
 
     public GameObject currentCheckpoint;
     public PlatformManager platformManager;
@@ -40,6 +41,11 @@ public class GameController : MonoBehaviour {
     public void UpdateCoinText()
     {
         coinsText.text = statistics.PlayerCoins.ToString();
+    }
+
+    public void UpdateMainCoinText()
+    {
+        mainCoinText.text = statistics.PlayerMainCoins.ToString();
     }
 
     public void SetPaused(bool paused)

@@ -27,6 +27,8 @@ public sealed class PlayerStats {
         //StompedEnemies, PlayerDeaths und PlayerPoints aus bspw. Config auslesen
 
         PlayerCoins = 0;
+        PlayerMainCoins = 0;
+
     }
 
     public ulong StompedEnemies { get; private set; }
@@ -34,10 +36,16 @@ public sealed class PlayerStats {
     public ulong PlayerPoints { get; private set; }
 
     public ulong PlayerCoins { get; private set; }
+    public ulong PlayerMainCoins { get; private set; }
 
     public void AddCoin(CoinItem item)
     {
         PlayerCoins++;
+        AddPlayerPoints(item.points);
+    }
+    public void AddMainCoin(CoinMainItem item)
+    {
+        PlayerMainCoins++;
         AddPlayerPoints(item.points);
     }
 
