@@ -3,25 +3,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class PlayerController : Controller2D {
 
+    [SerializeField]
     [Range(0.01f, 100.0f)]
-    public float jumpHeight = 3.0f;
+    private float jumpHeight = 3.0f;
+    [SerializeField]
     [Range(0.01f, 100.0f)]
-    public float jumpTimeToTop = 0.3f;
+    private float jumpTimeToTop = 0.3f;
+    [SerializeField]
     [Range(0.01f, 100.0f)]
-    public float groundAccelerationTime = 0.1f;
+    private float groundAccelerationTime = 0.1f;
+    [SerializeField]
     [Range(0.01f, 100.0f)]
-    public float airAccelerationTime = 0.2f;
+    private float airAccelerationTime = 0.2f;
+    [SerializeField]
     [Range(0.01f, 50.0f)]
-    public float wallJumpVelocity = 2.0f;
+    private float wallJumpVelocity = 2.0f;
 
     private float jumpVelocity = 10.0f;
     private float horizontalVelocitySmooting = 0.0f;
+    private Animator animator;
 
     protected override void Start () {
         base.Start();
 
+        animator = this.gameObject.GetComponentIfNotNull<Animator>();
         RecalculateJumpPhysics();
 	}
 
@@ -59,6 +67,10 @@ public class PlayerController : Controller2D {
                 currentVelocity.x = 0;
             }
         }
+
+        animator.SetBool("Ground", CollisionInfo.IsCollidingBelow);
+        animator.SetFloat("vSpeed", currentVelocity.y);
+        animator.SetFloat("Speed", Mathf.Abs(currentVelocity.x));
 
         if (Input.GetKeyDown(KeyCode.Space) && CollisionInfo.IsCollidingBelow)
         {

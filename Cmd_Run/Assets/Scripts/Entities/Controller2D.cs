@@ -3,16 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(BoxCollider2D), typeof(Rigidbody2D))]
+[RequireComponent(typeof(BoxCollider2D), typeof(Rigidbody2D), typeof(SpriteRenderer))]
 public abstract class Controller2D : MonoBehaviour, IEntity {
 
+    [SerializeField]
     [Range(0.01f, 50.0f)]
-    public float moveSpeed = 4;
+    protected float moveSpeed = 4;
+    [SerializeField]
     [Range(2, byte.MaxValue)]
-    public int verticalRayCount = 5;
+    protected int verticalRayCount = 5;
+    [SerializeField]
     [Range(2, byte.MaxValue)]
-    public int horizontalRayCount = 5;
-    public LayerMask collisionLayers;
+    protected int horizontalRayCount = 5;
+    [SerializeField]
+    protected LayerMask collisionLayers;
 
     public IEntity Killer { get; protected set; }
     public bool IsAlive { get; protected set; }
@@ -20,6 +24,7 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
     protected CollisionInfo2D CollisionInfo;
     protected Vector3 currentVelocity = Vector3.zero;
     protected float gravity = -9.81f;
+    protected SpriteRenderer spriteRenderer;
 
     private const float colliderInset = 0.015f;
     private float horizontalRaySpacing;
@@ -33,6 +38,7 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
         Killer = null;
         IsAlive = true;
 
+        spriteRenderer = this.gameObject.GetComponentIfNotNull<SpriteRenderer>();
         GetRaySpacing();
     }
 
@@ -54,8 +60,8 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
         Bounds bounds = boxCollider.bounds;
         bounds.Expand(colliderInset * -2);
 
-        verticalRaySpacing = bounds.size.y / (verticalRayCount - 1);
-        horizontalRaySpacing = bounds.size.x / (horizontalRayCount - 1);
+        verticalRaySpacing = bounds.size.x / (verticalRayCount - 1);
+        horizontalRaySpacing = bounds.size.y / (horizontalRayCount - 1);
     }
 
     protected virtual void Move(Vector3 velocity)
@@ -65,6 +71,7 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
 
         if (velocity.x != 0)
         {
+            spriteRenderer.flipX = (velocity.x < 0);
             CollisionInfo.HorizontallyCollidingObject = GetHorizontalCollisions(ref velocity, Mathf.Sign(velocity.x));
         }
         if(velocity.y != 0)

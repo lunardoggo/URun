@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class EnemyController : Controller2D {
 
+    [SerializeField]
     [Range(0.01f, 100.0f)]
-    public float groundAccelerationTime = 0.1f;
-
+    private float groundAccelerationTime = 0.1f;
     private float stompPlayerJumpHeight = 2.0f;
-
     private float horizontalVelocitySmooting;
 
     protected override void Start()
@@ -53,7 +53,6 @@ public class EnemyController : Controller2D {
         if(cause == DeathCause.JumpedApon && killer is PlayerController)
         {
             //TODO: Jump nach oben, wenn Spieler
-            //((PlayerController)killer).
             PlayerStats.Instance.AddStompedEnemy();
             Destroy(this.gameObject);
         }
