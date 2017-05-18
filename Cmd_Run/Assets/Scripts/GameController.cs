@@ -6,18 +6,29 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 
-    public Text healthText;
-    public Text coinsText;
-    public Text powerUpText;
+    [SerializeField]
+    private Text healthText;
+    [SerializeField]
+    private Text coinsText;
+    [SerializeField]
+    private Text powerUpText;
+    [SerializeField]
+    private GameObject currentCheckpoint;
+    [SerializeField]
+    private PlatformManager platformManager;
+    [SerializeField]
+    private PlayerController player;
+    [SerializeField]
+    private int health;
 
-    public GameObject currentCheckpoint;
-    public PlatformManager platformManager;
-    public PlayerController player;
-
-    public int health;
-
+    public PlayerController Player { get; private set; }
     public bool IsPaused { get; private set; }
     public bool PlayerIsAlive { get { return health > 0; } }
+    public GameObject CurrentCheckpoint
+    {
+        get { return currentCheckpoint; }
+        set { currentCheckpoint = value; }
+    }
 
     private float lastTimeScale = 1.0f;
     private PlayerStats statistics;
@@ -27,6 +38,7 @@ public class GameController : MonoBehaviour {
         health = 3;
         player = GameObject.FindObjectOfType<PlayerController>();
 
+        Player = player;
         UpdateCoinText();
     }
 	
@@ -40,6 +52,22 @@ public class GameController : MonoBehaviour {
     public void UpdateCoinText()
     {
         coinsText.text = statistics.PlayerCoins.ToString();
+    }
+
+    public void UpdateHealthText()
+    {
+        healthText.text = health.ToString();
+    }
+
+    public void UpdatePowerUpText(ushort value)
+    {
+        powerUpText.text = value + " s";
+    }
+
+    public void AddHealth()
+    {
+        health++;
+        UpdateHealthText();
     }
 
     public void SetPaused(bool paused)

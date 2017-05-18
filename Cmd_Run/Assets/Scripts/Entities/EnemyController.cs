@@ -52,9 +52,8 @@ public class EnemyController : Controller2D {
     {
         if(cause == DeathCause.JumpedApon && killer is PlayerController)
         {
-            //TODO: Jump nach oben, wenn Spieler
             PlayerStats.Instance.AddStompedEnemy();
-            Destroy(this.gameObject);
         }
+        Destroy(this.gameObject);
     }
 }

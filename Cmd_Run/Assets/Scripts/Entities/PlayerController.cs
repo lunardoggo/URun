@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class PlayerController : Controller2D {
 
+    [SerializeField]
+    private BulletController bulletPrefab = null;
     [SerializeField]
     [Range(0.01f, 100.0f)]
     private float jumpHeight = 3.0f;
@@ -22,13 +24,16 @@ public class PlayerController : Controller2D {
     [Range(0.01f, 50.0f)]
     private float wallJumpVelocity = 2.0f;
 
+    private GameController gameController = null;
+    private PowerUpItem currentPowerUp = null;
     private float jumpVelocity = 10.0f;
     private float horizontalVelocitySmooting = 0.0f;
-    private Animator animator;
+    private Animator animator = null;
 
     protected override void Start () {
         base.Start();
 
+        gameController = FindObjectOfType<GameController>();
         animator = this.gameObject.GetComponentIfNotNull<Animator>();
         RecalculateJumpPhysics();
 	}
@@ -82,12 +87,55 @@ public class PlayerController : Controller2D {
                                              (CollisionInfo.IsCollidingBelow) ? groundAccelerationTime : airAccelerationTime);
         currentVelocity.y += gravity * Time.deltaTime;
         Move(currentVelocity * Time.deltaTime);
-	}
+
+        UsePowerUp();
+    }
 
     public void RecalculateJumpPhysics()
     {
         gravity = -(2 * jumpHeight) / Mathf.Pow(jumpTimeToTop, 2);
         jumpVelocity = Mathf.Abs(gravity) * jumpTimeToTop;
+    }
+
+    public void SetPowerUp(PowerUpItem item)
+    {
+        if(currentPowerUp != null)
+        {
+            currentPowerUp.OnPowerUpExpired -= OnPowerUpExpired;
+            currentPowerUp.Cancel();
+            currentPowerUp = null;
+        }
+        currentPowerUp = item;
+        currentPowerUp.OnPowerUpExpired += OnPowerUpExpired;
+        currentPowerUp.Activate();
+    }
+
+    private void OnPowerUpExpired(object sender, EventArgs e)
+    {
+        Debug.Log("Expired");
+        currentPowerUp = null;
+    }
+
+    private void UsePowerUp()
+    {
+        gameController.UpdatePowerUpText(currentPowerUp == null ? (ushort)0 : currentPowerUp.Duration);
+        if (!Input.GetMouseButtonDown(0) || currentPowerUp == null)
+        {
+            return;
+        }
+        switch (currentPowerUp.Kind)
+        {
+            case PowerUpKind.Bullet:
+                ShootBullet();
+                break;
+        }
+    }
+
+    private void ShootBullet()
+    {
+        Quaternion rotation = transform.rotation;
+        rotation.z = (spriteRenderer.flipX ? 180 : 0);
+        BulletController c = Instantiate(bulletPrefab, transform.position, rotation);
     }
 
     private void Jump()
@@ -105,5 +153,6 @@ public class PlayerController : Controller2D {
     public override void Die(DeathCause cause, IEntity killer)
     {
         GameObject.FindWithTag("GameController").GetComponent<GameController>().RespawnPlayer(true);
+        currentPowerUp = null;
     }
 }

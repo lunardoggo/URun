@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface CollectableItem {
+public interface ICollectible {
     void Start();
     void OnTriggerEnter2D(Collider2D other);
 }

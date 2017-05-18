@@ -21,14 +21,19 @@ public class ResetTrigger : MonoBehaviour {
 
     private void Update()
     {
-        transform.position = new Vector3(controller.player.transform.position.x, yLocationCoordinate);
+        transform.position = new Vector3(controller.Player.transform.position.x, yLocationCoordinate);
     }
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if(collider.gameObject.CompareTag("Player"))
+        /*if(collider.gameObject.CompareTag("Player"))
         {
             controller.RespawnPlayer(true);
+        }*/
+        IEntity entity = collider.gameObject.GetComponentIfNotNull<IEntity>();
+        if (entity != null)
+        {
+            entity.Die(DeathCause.Trigger, null);
         }
         else
         {

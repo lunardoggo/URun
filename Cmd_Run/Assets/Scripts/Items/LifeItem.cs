@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
-public class LifeItem : MonoBehaviour, CollectableItem {
+public class LifeItem : MonoBehaviour, ICollectible {
 
     private GameController gameController;
     private PlayerStats statistics;
@@ -18,6 +18,7 @@ public class LifeItem : MonoBehaviour, CollectableItem {
         if(other.gameObject.CompareTag("Player"))
         {
             //TODO: Leben hinzufügen
+            gameController.AddHealth();
             Destroy(this.gameObject);
         }
     }

@@ -16,7 +16,7 @@ public class Checkpoint : MonoBehaviour {
         {
             Debug.Log("Checkpoint erreicht");
 
-            gameController.currentCheckpoint = gameObject;
+            gameController.CurrentCheckpoint = gameObject;
         }
     }
 }
