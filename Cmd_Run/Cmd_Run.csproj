@@ -109,7 +109,6 @@
     <Compile Include="Assets\Scripts\Platform_move_y.cs" />
     <Compile Include="Assets\Scripts\Platform_moving.cs" />
     <Compile Include="Assets\Scripts\Platformer2DUserControl.cs" />
-    <Compile Include="Assets\Scripts\PlayerBullet.cs" />
     <Compile Include="Assets\Scripts\PlayerStats.cs" />
     <Compile Include="Assets\Scripts\ResetTrigger.cs" />
   </ItemGroup>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
-public class CoinMainItem : MonoBehaviour, CollectableItem
+public class CoinMainItem : MonoBehaviour, ICollectible
 {
 
     [Range(1, ushort.MaxValue)]
