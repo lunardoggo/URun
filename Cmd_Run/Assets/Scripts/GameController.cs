@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 
+<<<<<<< HEAD
     [SerializeField]
     private Text healthText;
     [SerializeField]
@@ -20,6 +21,18 @@ public class GameController : MonoBehaviour {
     private PlayerController player;
     [SerializeField]
     private int health;
+=======
+    public Text healthText;
+    public Text coinsText;
+    public Text powerUpText;
+    public Text mainCoinText;
+
+    public GameObject currentCheckpoint;
+    public PlatformManager platformManager;
+    public PlayerController player;
+
+    public int health;
+>>>>>>> 6c8128057a236f04e77f8068637226314814fca2
 
     public PlayerController Player { get; private set; }
     public bool IsPaused { get; private set; }
@@ -54,6 +67,7 @@ public class GameController : MonoBehaviour {
         coinsText.text = statistics.PlayerCoins.ToString();
     }
 
+<<<<<<< HEAD
     public void UpdateHealthText()
     {
         healthText.text = health.ToString();
@@ -68,6 +82,11 @@ public class GameController : MonoBehaviour {
     {
         health++;
         UpdateHealthText();
+=======
+    public void UpdateMainCoinText()
+    {
+        mainCoinText.text = statistics.PlayerMainCoins.ToString();
+>>>>>>> 6c8128057a236f04e77f8068637226314814fca2
     }
 
     public void SetPaused(bool paused)

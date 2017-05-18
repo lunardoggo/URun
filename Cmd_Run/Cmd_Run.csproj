@@ -99,6 +99,7 @@
     <Compile Include="Assets\Scripts\Interfaces\IEntity.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IProjectile.cs" />
     <Compile Include="Assets\Scripts\Items\CoinItem.cs" />
+    <Compile Include="Assets\Scripts\Items\CoinMainItem.cs" />
     <Compile Include="Assets\Scripts\Items\LifeItem.cs" />
     <Compile Include="Assets\Scripts\Items\PowerUpItem.cs" />
     <Compile Include="Assets\Scripts\LevelEnd.cs" />
