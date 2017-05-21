@@ -4,13 +4,18 @@ using UnityEngine;
 
 public static class GameTools {
 
-    public static T GetComponentIfNotNull<T>(this GameObject gameObject)
+    public static bool TryGetComponent<T>(this GameObject obj, out T component)
     {
-        T output = default(T);
-        if (gameObject != null)
+        if (obj != null)
         {
-            output = gameObject.GetComponent<T>();
+            component = obj.GetComponent<T>();
+            if (component != null)
+            {
+                component = obj.GetComponent<T>();
+                return true;
+            }
         }
-        return output;
+        component = default(T);
+        return false;
     }
 }

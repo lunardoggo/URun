@@ -11,6 +11,7 @@ public class CameraFollow2D : MonoBehaviour {
     public Vector3 followOffset = Vector3.zero;
     
     private Vector3 currentVelocity = Vector3.zero;
+    private const float offsetFactor = 0.1f;
     
 	void Start () {
 		
@@ -18,7 +19,7 @@ public class CameraFollow2D : MonoBehaviour {
 	
 	void Update () {
 
-        Vector3 newPosition = (Vector3.SmoothDamp(transform.position, followObject.transform.position, ref currentVelocity, smoothTime) + Vector3.back) + followOffset;
+        Vector3 newPosition = (Vector3.SmoothDamp(transform.position, followObject.transform.position, ref currentVelocity, smoothTime) + Vector3.back) + followOffset * offsetFactor;
 
         if (!canGoLeft && newPosition.x < transform.position.x) 
         {

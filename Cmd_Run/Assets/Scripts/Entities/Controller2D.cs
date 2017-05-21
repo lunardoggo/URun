@@ -7,8 +7,8 @@ using UnityEngine;
 public abstract class Controller2D : MonoBehaviour, IEntity {
 
     [SerializeField]
-    [Range(0.01f, 50.0f)]
-    protected float moveSpeed = 4;
+    [Range(0.000001f, 50.0f)]
+    protected float movementSpeed = 4;
     [SerializeField]
     [Range(2, byte.MaxValue)]
     protected int verticalRayCount = 5;
@@ -17,9 +17,13 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
     protected int horizontalRayCount = 5;
     [SerializeField]
     protected LayerMask collisionLayers;
+    [SerializeField]
+    protected bool applyGravity = true;
 
     public IEntity Killer { get; protected set; }
     public bool IsAlive { get; protected set; }
+    public Vector3 CurrentVelocity { get { return currentVelocity; } }
+    public float Gravity { get { return gravity; } }
 
     protected CollisionInfo2D CollisionInfo;
     protected Vector3 currentVelocity = Vector3.zero;
@@ -38,14 +42,21 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
         Killer = null;
         IsAlive = true;
 
-        spriteRenderer = this.gameObject.GetComponentIfNotNull<SpriteRenderer>();
+        spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
         GetRaySpacing();
     }
 
+    protected virtual void Awake() { }
     protected virtual void Update () { }
+    protected virtual void OnDestroy() { }
 
     protected void UpdateRaycasts()
     {
+        if(boxCollider == null)
+        {
+            boxCollider = GetComponent<BoxCollider2D>();
+        }
+
         Bounds bounds = boxCollider.bounds;
         bounds.Expand(colliderInset * -2);
 
@@ -72,42 +83,72 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
         if (velocity.x != 0)
         {
             spriteRenderer.flipX = (velocity.x < 0);
-            CollisionInfo.HorizontallyCollidingObject = GetHorizontalCollisions(ref velocity, Mathf.Sign(velocity.x));
+            CollisionInfo.HorizontallyCollidingObject = GetFirstHorizontalCollision(ref velocity, Mathf.Sign(velocity.x));
         }
         if(velocity.y != 0)
         {
-            CollisionInfo.VerticallyCollidingObject = GetVerticalCollisions(ref velocity, Mathf.Sign(velocity.y));
+            CollisionInfo.VerticallyCollidingObject = GetFirstVerticalCollision(ref velocity, Mathf.Sign(velocity.y));
         }
         transform.Translate(velocity);
     }
 
-    protected GameObject GetVerticalCollisions(ref Vector3 velocity, float verticalDirection)
+    protected GameObject GetFirstVerticalCollision(ref Vector3 velocity, float verticalDirection)
     {
-        List<GameObject> collidingObjects = new List<GameObject>();
         float rayLength = Mathf.Abs(velocity.y) + colliderInset;
 
-        for(int i = 0; i < verticalRayCount; i++)
+        for (int i = 0; i < verticalRayCount; i++)
         {
             Vector2 rayOrigin = (verticalDirection == -1 ? raycastOrigins.BottomLeft : raycastOrigins.TopLeft) + Vector2.right * (verticalRaySpacing * i + velocity.x);
-            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * verticalDirection, rayLength, collisionLayers);
-
-            Debug.DrawRay(rayOrigin, Vector2.up * verticalDirection * rayLength, Color.green);
-
+            RaycastHit2D hit = CastRayVertically(rayOrigin, verticalDirection, collisionLayers, rayLength, ref velocity);
             if (hit)
             {
-                velocity.y = (hit.distance - colliderInset) * verticalDirection;
-                rayLength = hit.distance;
-                CollisionInfo.IsCollidingAbove = (verticalDirection == 1);
-                CollisionInfo.IsCollidingBelow = (verticalDirection == -1);
-
                 return hit.collider.gameObject;
             }
         }
-
         return null;
     }
 
-    protected GameObject GetHorizontalCollisions(ref Vector3 velocity, float horizontalDirection)
+    protected List<GameObject> GetAllVerticalCollisions(ref Vector3 velocity, float verticalDirection)
+    {
+        List<GameObject> output = new List<GameObject>();
+        Vector3 minVelocity = velocity, tmpVelocity = velocity; ;
+        float rayLength = Mathf.Abs(velocity.y) + colliderInset;
+
+        for (int i = 0; i < verticalRayCount; i++)
+        {
+            Vector2 rayOrigin = (verticalDirection == -1 ? raycastOrigins.BottomLeft : raycastOrigins.TopLeft) + Vector2.right * (verticalRaySpacing * i + velocity.x);
+            RaycastHit2D hit = CastRayVertically(rayOrigin, verticalDirection, collisionLayers, rayLength, ref velocity);
+            if (hit)
+            {
+                output.Add(hit.collider.gameObject);
+            }
+            if(velocity.magnitude < minVelocity.magnitude)
+            {
+                minVelocity = velocity;
+            }
+            velocity = tmpVelocity;
+        }
+        velocity = minVelocity;
+        return output;
+    }
+
+    private RaycastHit2D CastRayVertically(Vector2 origin, float verticalDirection, LayerMask collisionLayers, float rayLength, ref Vector3 velocity)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.up * verticalDirection, rayLength, collisionLayers);
+        Debug.DrawRay(origin, Vector2.up * verticalDirection * rayLength, Color.green);
+
+        if(hit)
+        {
+            velocity.y = (hit.distance - colliderInset) * verticalDirection;
+            rayLength = hit.distance;
+            CollisionInfo.IsCollidingAbove = (verticalDirection == 1);
+            CollisionInfo.IsCollidingBelow = (verticalDirection == -1);
+        }
+
+        return hit;
+    }
+
+    protected GameObject GetFirstHorizontalCollision(ref Vector3 velocity, float horizontalDirection)
     {
         float rayLength = Mathf.Abs(velocity.x) + colliderInset;
 

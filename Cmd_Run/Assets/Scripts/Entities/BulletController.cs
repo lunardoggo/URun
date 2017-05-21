@@ -44,7 +44,7 @@ public class BulletController : MonoBehaviour, IProjectile {
             if (hit)
             {
                 IEntity entity = null;
-                if ((entity = hit.collider.gameObject.GetComponentIfNotNull<IEntity>()) != null)
+                if (hit.collider.gameObject.TryGetComponent(out entity) && hit.collider.gameObject.CompareTag("Enemy"))
                 {
                     entity.Die(DeathCause.EnemyTouched, this);
                 }

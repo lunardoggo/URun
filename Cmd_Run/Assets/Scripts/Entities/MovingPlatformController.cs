@@ -4,105 +4,101 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class MovingPlatformController : Controller2D, IEntity {
+public class MovingPlatformController : BasePlatform {
 
-    public PlatformMovementMode movementMode = PlatformMovementMode.FallOff;
-    public bool startOnPlayerCollision = true;
-    public List<Vector3> movementPath;
+    [SerializeField]
+    private PlatformMovementMode movementMode = PlatformMovementMode.Once;
+    [SerializeField]
+    private bool startOnPlayerCollision = true;
+    [SerializeField]
+    private BezierSpline path;
+    [SerializeField]
+    [Range(0.01f, 20.0f)]
+    private float splineSizeMultiplier = 1.0f;
+    [SerializeField]
+    [Range(-0.999999f, 0.999999f)]
+    private float followProgress = 0.0f;
 
-    private Vector3 nextWaypoint = Vector3.zero;
-    private bool move = false;
-    private bool applyGravity = false;
+    private bool move = false, forward = true;
+    private float moveSpeed = 0.0f;
 
     protected override void Start () {
         base.Start();
         move = !startOnPlayerCollision;
-        if(movementPath.Count > 0)
-        {
-            nextWaypoint = movementPath[0];
-        }
-
-        var count = this.verticalRayCount;
+        moveSpeed = Mathf.Pow(movementSpeed, -1);
+        path *= splineSizeMultiplier;
 	}
 
     protected override void Update () {
-        Vector3 vector = Vector3.zero;
-        
-
-        if(move)
-        {
-            Move(Vector3.MoveTowards(transform.position, nextWaypoint, moveSpeed));
-            if (transform.position == nextWaypoint)
-            {
-                int index = movementPath.IndexOf(nextWaypoint);
-                if (movementPath.Count > index)
-                {
-                    nextWaypoint = movementPath[index + 1];
-                }
-                else
-                {
-                    PathEnd();
-                }
-            }
-        }
-        else
-        {
-            GameObject player = GetVerticalCollisions(ref vector, 1);
-            Debug.Log(player);
-            if (player != null)
-            {
-                move = true;
-            }
-
-            if (applyGravity)
-            {
-                currentVelocity.y += -9.81f * Time.deltaTime;
-            }
-            Move(currentVelocity * Time.deltaTime);
-        }
-
-        Debug.Log(move);
+        base.Update();
+        Move(Vector3.zero);
 	}
 
     protected override void Move(Vector3 velocity)
     {
         UpdateRaycasts();
-        transform.Translate(velocity);
+        CollisionInfo.Reset();
+        Vector3 up = Vector3.up * RayLength;
+
+        if (move)
+        {
+            if (forward)
+            {
+                followProgress += Time.deltaTime * moveSpeed;
+                if (followProgress > 1.0f)
+                {
+                    PathEnd();
+                }
+            }
+            else
+            {
+                followProgress -= Time.deltaTime * moveSpeed;
+                if (followProgress < 0.0f)
+                {
+                    followProgress *= -1;
+                    forward = true;
+                }
+            }
+
+            Vector3 localPos = transform.localPosition;
+            transform.localPosition = path.GetPoint(followProgress) + originPosition;
+            deltaPosition = transform.localPosition - localPos;
+        }
+        PlayerController player = null;
+        if(GetFirstVerticalCollision(ref up, 1).TryGetComponent(out player))
+        {
+            if(startOnPlayerCollision && !move)
+            {
+                move = true;
+            }
+            player.transform.Translate(deltaPosition);
+        }
     }
 
     private void PathEnd()
     {
         switch(movementMode)
         {
-            case PlatformMovementMode.FallOff:
+            case PlatformMovementMode.Once:
                 move = false;
-                applyGravity = true;
-                break;
-            case PlatformMovementMode.Stop:
+                applyGravity = false;
                 currentVelocity = Vector3.zero;
-                nextWaypoint = movementPath[0];
-                movementPath.Reverse();
+
                 break;
-            case PlatformMovementMode.TeleportToStart:
-                transform.position = movementPath[0];
-                nextWaypoint = movementPath[0];
+            case PlatformMovementMode.Loop:
+                followProgress -= 1.0f;
                 break;
-            case PlatformMovementMode.TravelBack:
-                movementPath.Reverse();
+            case PlatformMovementMode.PingPong:
+                followProgress = 2.0f - followProgress;
+                forward = false;
                 break;
         }
-    }
-
-    public override void Die(DeathCause cause, IEntity killer)
-    {
-        Destroy(this);
     }
 }
 
 public enum PlatformMovementMode : byte
 {
-    FallOff = 0,
-    Stop = 1,
-    TravelBack = 2,
-    TeleportToStart = 3
+    Once = 0,
+    Loop = 1,
+    PingPong = 2,
 }

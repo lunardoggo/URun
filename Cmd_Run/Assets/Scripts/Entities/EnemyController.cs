@@ -15,7 +15,7 @@ public class EnemyController : Controller2D {
     protected override void Start()
     {
         base.Start();
-        currentVelocity.x = -moveSpeed; 
+        currentVelocity.x = -movementSpeed; 
     }
 
     protected override void Update()
@@ -25,8 +25,8 @@ public class EnemyController : Controller2D {
         if (CollisionInfo.IsCollidingBelow)
         {
             currentVelocity.y = 0;
-            PlayerController player = CollisionInfo.VerticallyCollidingObject.GetComponentIfNotNull<PlayerController>();
-            if(player != null)
+            PlayerController player = null;
+            if(CollisionInfo.VerticallyCollidingObject.TryGetComponent(out player))
             {
                 player.Die(DeathCause.JumpedApon, this);
                 currentVelocity.y = stompPlayerJumpHeight;
@@ -36,14 +36,14 @@ public class EnemyController : Controller2D {
         if (CollisionInfo.IsCollidingRight || CollisionInfo.IsCollidingLeft)
         {
             currentVelocity.x *= -1;
-            PlayerController player = CollisionInfo.HorizontallyCollidingObject.GetComponentIfNotNull<PlayerController>();
-            if (player != null)
+            PlayerController player = null;
+            if (CollisionInfo.HorizontallyCollidingObject.TryGetComponent(out player))
             {
                 player.Die(DeathCause.EnemyTouched, this);
             }
         }
 
-        currentVelocity.x = Mathf.SmoothDamp(currentVelocity.x, moveSpeed * Mathf.Sign(currentVelocity.x), ref horizontalVelocitySmooting, groundAccelerationTime);
+        currentVelocity.x = Mathf.SmoothDamp(currentVelocity.x, movementSpeed * Mathf.Sign(currentVelocity.x), ref horizontalVelocitySmooting, groundAccelerationTime);
         currentVelocity.y += gravity * Time.deltaTime;
         Move(currentVelocity * Time.deltaTime);
     }

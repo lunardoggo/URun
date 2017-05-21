@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class JumpPadController : Controller2D, IEntity {
+
+    [SerializeField]
+    [Range(0.01f, 50.0f)]
+    private float jumpTimeToTop;
+    [SerializeField]
+    [Range(0.01f, 50.0f)]
+    private float jumpHeight;
+
+    protected override void Start()
+    {
+        base.Start();
+        applyGravity = false;
+    }
+
+    protected override void Update () {
+        UpdateRaycasts();
+        CollisionInfo.Reset();
+
+        PlayerController player = null;
+        Vector3 up = Vector3.up * 0.1f;
+        if(GetFirstVerticalCollision(ref up, 1).TryGetComponent(out player))
+        {
+            Debug.Log(GetVelocity());
+            player.Jump(GetVelocity());
+        }
+	}
+
+    private float GetVelocity()
+    {
+        return Mathf.Abs((2 * jumpHeight) / Mathf.Pow(jumpTimeToTop, 2)) * jumpTimeToTop;
+    }
+
+    public override void Die(DeathCause cause, IEntity killer)
+    {
+        Destroy(this.gameObject);
+    }
+}

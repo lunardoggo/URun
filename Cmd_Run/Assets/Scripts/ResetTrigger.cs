@@ -26,12 +26,8 @@ public class ResetTrigger : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        /*if(collider.gameObject.CompareTag("Player"))
-        {
-            controller.RespawnPlayer(true);
-        }*/
-        IEntity entity = collider.gameObject.GetComponentIfNotNull<IEntity>();
-        if (entity != null)
+        IEntity entity = null;
+        if (collider.gameObject.TryGetComponent(out entity))
         {
             entity.Die(DeathCause.Trigger, null);
         }

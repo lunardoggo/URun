@@ -26,67 +26,24 @@ public class PlayerController : Controller2D {
 
     private GameController gameController = null;
     private PowerUpItem currentPowerUp = null;
-    private float jumpVelocity = 10.0f;
-    private float horizontalVelocitySmooting = 0.0f;
+    private float jumpVelocity = 10.0f, horizontalVelocitySmooting = 0.0f;
     private Animator animator = null;
+    private MovingPlatformController currentPlatform;
 
     protected override void Start () {
         base.Start();
 
         gameController = FindObjectOfType<GameController>();
-        animator = this.gameObject.GetComponentIfNotNull<Animator>();
+        animator = this.gameObject.GetComponent<Animator>();
         RecalculateJumpPhysics();
 	}
 
     protected override void Update () {
         base.Update();
-        Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), 0);
+        float inputX = Input.GetAxisRaw("Horizontal");
 
-        if(CollisionInfo.IsCollidingAbove || CollisionInfo.IsCollidingBelow)
-        {
-            EnemyController enemy = CollisionInfo.VerticallyCollidingObject.GetComponentIfNotNull<EnemyController>();
-            if (CollisionInfo.IsCollidingBelow && enemy != null)
-            {
-                enemy.Die(DeathCause.JumpedApon, this);
-                Jump();
-            }
-            else
-            {
-                currentVelocity.y = 0;
-            }
-        }
-        if (CollisionInfo.IsCollidingRight || CollisionInfo.IsCollidingLeft)
-        {
-            EnemyController enemy = CollisionInfo.HorizontallyCollidingObject.GetComponentIfNotNull<EnemyController>();
-            if(enemy != null)
-            {
-                this.Die(DeathCause.EnemyTouched, enemy);
-            }
-
-            if (!CollisionInfo.IsCollidingBelow && !CollisionInfo.IsCollidingAbove && Input.GetKeyDown(KeyCode.Space))
-            {
-                WallJump();
-            }
-            else
-            {
-                currentVelocity.x = 0;
-            }
-        }
-
-        animator.SetBool("Ground", CollisionInfo.IsCollidingBelow);
-        animator.SetFloat("vSpeed", currentVelocity.y);
-        animator.SetFloat("Speed", Mathf.Abs(currentVelocity.x));
-
-        if (Input.GetKeyDown(KeyCode.Space) && CollisionInfo.IsCollidingBelow)
-        {
-            Jump();
-        }
-
-        float horizontalTargetVelocity = input.x * moveSpeed;
-        currentVelocity.x = Mathf.SmoothDamp(currentVelocity.x, horizontalTargetVelocity, ref horizontalVelocitySmooting, 
-                                             (CollisionInfo.IsCollidingBelow) ? groundAccelerationTime : airAccelerationTime);
-        currentVelocity.y += gravity * Time.deltaTime;
-        Move(currentVelocity * Time.deltaTime);
+        AnimatePlayer(inputX);
+        CalculateMovement(inputX);
 
         UsePowerUp();
     }
@@ -110,9 +67,66 @@ public class PlayerController : Controller2D {
         currentPowerUp.Activate();
     }
 
+    private void CalculateMovement(float inputX)
+    {
+        if (CollisionInfo.IsCollidingAbove || CollisionInfo.IsCollidingBelow)
+        {
+            EnemyController enemy = null;
+            if (CollisionInfo.IsCollidingBelow && CollisionInfo.VerticallyCollidingObject.TryGetComponent(out enemy))
+            {
+                enemy.Die(DeathCause.JumpedApon, this);
+                Jump(jumpVelocity);
+            }
+            else if (!CollisionInfo.VerticallyCollidingObject.TryGetComponent(out currentPlatform))
+            {
+                currentPlatform = null;
+                currentVelocity.y = 0;
+            }
+            else
+            {
+                currentVelocity.y = 0;
+            }
+        }
+        if (CollisionInfo.IsCollidingRight || CollisionInfo.IsCollidingLeft)
+        {
+            EnemyController enemy = null;
+            if (CollisionInfo.HorizontallyCollidingObject.TryGetComponent(out enemy))
+            {
+                this.Die(DeathCause.EnemyTouched, enemy);
+            }
+
+            if (!CollisionInfo.IsCollidingBelow && !CollisionInfo.IsCollidingAbove && Input.GetKeyDown(KeyCode.Space))
+            {
+                WallJump();
+            }
+            else
+            {
+                currentVelocity.x = 0;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && CollisionInfo.IsCollidingBelow)
+        {
+            Jump(jumpVelocity);
+        }
+
+        float horizontalTargetVelocity = inputX * movementSpeed;
+        currentVelocity.x = Mathf.SmoothDamp(currentVelocity.x, horizontalTargetVelocity, ref horizontalVelocitySmooting,
+                                             (CollisionInfo.IsCollidingBelow) ? groundAccelerationTime : airAccelerationTime);
+        currentVelocity.y += gravity * Time.deltaTime;
+
+        Move((currentVelocity + (currentPlatform != null ? currentPlatform.CurrentVelocity : Vector3.zero)) * Time.deltaTime);
+    }
+
+    private void AnimatePlayer(float inputX)
+    {
+        animator.SetBool("Ground", CollisionInfo.IsCollidingBelow);
+        animator.SetFloat("vSpeed", currentVelocity.y);
+        animator.SetFloat("Speed", Mathf.Abs(inputX));
+    }
+
     private void OnPowerUpExpired(object sender, EventArgs e)
     {
-        Debug.Log("Expired");
         currentPowerUp = null;
     }
 
@@ -137,8 +151,8 @@ public class PlayerController : Controller2D {
         rotation.z = (spriteRenderer.flipX ? 180 : 0);
         BulletController c = Instantiate(bulletPrefab, transform.position, rotation);
     }
-
-    private void Jump()
+    
+    public void Jump(float jumpVelocity)
     {
         currentVelocity.y = jumpVelocity;
         CollisionInfo.IsCollidingBelow = false;
