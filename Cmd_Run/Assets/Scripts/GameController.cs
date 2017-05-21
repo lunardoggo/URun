@@ -6,22 +6,14 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 
-    [SerializeField]
-    private Text mainCoinText;
-    [SerializeField]
-    private Text healthText;
-    [SerializeField]
-    private Text coinsText;
-    [SerializeField]
-    private Text powerUpText;
-    [SerializeField]
-    private GameObject currentCheckpoint;
-    [SerializeField]
-    private PlatformManager platformManager;
-    [SerializeField]
-    private PlayerController player;
-    [SerializeField]
-    private int health;
+    public Text mainCoinText;
+    public Text healthText;
+    public Text coinsText;
+    public Text powerUpText;
+    public GameObject currentCheckpoint;
+    public List<PlatformSpawn> PlatformSpawns;
+    public PlayerController player;
+    public int health;
 
     public PlayerController Player { get; private set; }
     public bool IsPaused { get; private set; }
@@ -107,7 +99,10 @@ public class GameController : MonoBehaviour {
         if (PlayerIsAlive)
         {
             player.transform.position = currentCheckpoint.transform.position;
-            platformManager.SpawnPlatform();
+            foreach (PlatformSpawn spawn in PlatformSpawns)
+            {
+                spawn.SpawnPlatform();
+            }
         }
         else
         {

@@ -14,21 +14,25 @@ public class PlayerController : Controller2D {
     [SerializeField]
     [Range(0.01f, 100.0f)]
     private float jumpTimeToTop = 0.3f;
-    [SerializeField]
+    /*[SerializeField]
     [Range(0.01f, 100.0f)]
-    private float groundAccelerationTime = 0.1f;
+    private float groundAccelerationTime = 0.1f;*/
     [SerializeField]
     [Range(0.01f, 100.0f)]
     private float airAccelerationTime = 0.2f;
     [SerializeField]
     [Range(0.01f, 50.0f)]
     private float wallJumpVelocity = 2.0f;
+    [SerializeField]
+    [Range(0.01f, 50.0f)]
+    private float invincibleSeconds = 2.0f;
 
     private GameController gameController = null;
     private PowerUpItem currentPowerUp = null;
     private float jumpVelocity = 10.0f, horizontalVelocitySmooting = 0.0f;
     private Animator animator = null;
     private MovingPlatformController currentPlatform;
+    private Coroutine invincibleCoroutine;
 
     protected override void Start () {
         base.Start();
@@ -112,7 +116,7 @@ public class PlayerController : Controller2D {
 
         float horizontalTargetVelocity = inputX * movementSpeed;
         currentVelocity.x = Mathf.SmoothDamp(currentVelocity.x, horizontalTargetVelocity, ref horizontalVelocitySmooting,
-                                             (CollisionInfo.IsCollidingBelow) ? groundAccelerationTime : airAccelerationTime);
+                                             (CollisionInfo.IsCollidingBelow && currentPlatform != null) ? currentPlatform.AccelerationTime : airAccelerationTime);
         currentVelocity.y += gravity * Time.deltaTime;
 
         Move((currentVelocity + (currentPlatform != null ? currentPlatform.CurrentVelocity : Vector3.zero)) * Time.deltaTime);
@@ -144,18 +148,27 @@ public class PlayerController : Controller2D {
                 break;
         }
     }
-
-    private void ShootBullet()
-    {
-        Quaternion rotation = transform.rotation;
-        rotation.z = (spriteRenderer.flipX ? 180 : 0);
-        BulletController c = Instantiate(bulletPrefab, transform.position, rotation);
-    }
     
     public void Jump(float jumpVelocity)
     {
         currentVelocity.y = jumpVelocity;
         CollisionInfo.IsCollidingBelow = false;
+    }
+
+    public override void Die(DeathCause cause, IEntity killer)
+    {
+        if(invincibleCoroutine == null)
+        {
+            GameObject.FindWithTag("GameController").GetComponent<GameController>().RespawnPlayer(true);
+            currentPowerUp = null;
+            invincibleCoroutine = StartCoroutine(GetInvincibleTimer());
+        }
+    }
+
+    private IEnumerator GetInvincibleTimer()
+    {
+        yield return new WaitForSeconds(invincibleSeconds);
+        invincibleCoroutine = null;
     }
 
     private void WallJump()
@@ -164,9 +177,10 @@ public class PlayerController : Controller2D {
         currentVelocity.y = jumpVelocity;
     }
 
-    public override void Die(DeathCause cause, IEntity killer)
+    private void ShootBullet()
     {
-        GameObject.FindWithTag("GameController").GetComponent<GameController>().RespawnPlayer(true);
-        currentPowerUp = null;
+        Quaternion rotation = transform.rotation;
+        rotation.z = (spriteRenderer.flipX ? 180 : 0);
+        BulletController c = Instantiate(bulletPrefab, transform.position, rotation);
     }
 }

@@ -26,7 +26,6 @@ public class JumpPadController : Controller2D, IEntity {
         Vector3 up = Vector3.up * 0.1f;
         if(GetFirstVerticalCollision(ref up, 1).TryGetComponent(out player))
         {
-            Debug.Log(GetVelocity());
             player.Jump(GetVelocity());
         }
 	}

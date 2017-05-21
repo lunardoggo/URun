@@ -106,7 +106,7 @@
     <Compile Include="Assets\Scripts\Items\PowerUpItem.cs" />
     <Compile Include="Assets\Scripts\LevelEnd.cs" />
     <Compile Include="Assets\Scripts\LevelTimer.cs" />
-    <Compile Include="Assets\Scripts\PlatformManager.cs" />
+    <Compile Include="Assets\Scripts\PlatformSpawn.cs" />
     <Compile Include="Assets\Scripts\PlayerStats.cs" />
     <Compile Include="Assets\Scripts\ResetTrigger.cs" />
   </ItemGroup>

@@ -7,6 +7,11 @@ public class BasePlatform : Controller2D, IEntity {
     public event EventHandler<EventArgs> OnPlatformDestroyed;
 
     /// <summary>
+    /// Gibt an, wieviel Zeit ein Controller2D benötigt, um auf volle Geschwindigkeit zu beschleunigen
+    /// </summary>
+    public float AccelerationTime { get { return accelerationTime; } }
+
+    /// <summary>
     /// Positionsunterschied zwischen diesem und dem letzten Update
     /// </summary>
     protected Vector3 deltaPosition = Vector3.zero;
@@ -16,6 +21,10 @@ public class BasePlatform : Controller2D, IEntity {
     protected Vector3 originPosition = Vector3.zero;
 
     protected const float RayLength = 0.1f;
+
+    [SerializeField]
+    [Range(0.01f, 25.0f)]
+    private float accelerationTime = 0.1f;
 
     protected override void Awake () {
         applyGravity = false;
