@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class PlatformSpawn : MonoBehaviour {
 
-    /// <summary>
-    /// Speichert, ob die Platform zerstört ist, um sie später erneut zu spawnen
-    /// </summary>
-    [SerializeField]
-    private bool platformDestroyed = false;
     [SerializeField]
     private BasePlatform platformPrefab = null;
     private BasePlatform clone = null;
+
+    /// <summary>
+    /// Gibt zurück, ob die untergeordnete <see cref="BasePlatform"/> bereits zerstört wurde oder nicht
+    /// </summary>
+    public bool IsDestroyed { get; private set; }
 
     // Wenn Spieler stirbt sollen platformen spawnen wo keine platformen sind:
     // Funktion die prüft ob objekt zerstört ist 
     // im spawn skript diese funktion aufrufen und wenn objekt zerstört neue platform spawnen
 
-    void Start () {
+    private void Start () {
         CreateClone();
     }
 
@@ -36,11 +36,15 @@ public class PlatformSpawn : MonoBehaviour {
     {
         if(clone != null)
         {
-            clone.OnPlatformDestroyed -= OnPlatformDestroyed;
             Destroy(clone.gameObject);
         }
         clone = Instantiate(platformPrefab, transform.position, transform.rotation);
+        if(clone.GetType().Equals(typeof(FallingPlatform)))
+        {
+            ((FallingPlatform)clone).OnPlatfromFalling += OnPlatformFalling;
+        }
         clone.OnPlatformDestroyed += OnPlatformDestroyed;
+        IsDestroyed = false;
     }
 
     /// <summary>
@@ -48,10 +52,25 @@ public class PlatformSpawn : MonoBehaviour {
     /// </summary>
     private void OnPlatformDestroyed(object sender, EventArgs e)
     {
-        platformDestroyed = true;
+        IsDestroyed = true;
         if (sender.GetType().Equals(typeof(BasePlatform)))
         {
             ((BasePlatform)sender).OnPlatformDestroyed -= OnPlatformDestroyed;
+        }
+    }
+
+    /// <summary>
+    /// Wird beim Fallen der geklonten <see cref="BasePlatform"/>/>, wenn sie dem Typ <see cref="FallingPlatform"/> entspricht, aufgerufen
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnPlatformFalling(object sender, EventArgs e)
+    {
+        if(sender.GetType().Equals(typeof(FallingPlatform)))
+        {
+            IsDestroyed = true;
+            ((FallingPlatform)sender).OnPlatfromFalling -= OnPlatformFalling;
+            ((FallingPlatform)sender).OnPlatformDestroyed -= OnPlatformDestroyed;
         }
     }
 }

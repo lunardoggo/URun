@@ -33,6 +33,9 @@ public class BulletController : MonoBehaviour, IProjectile {
         destructionTimer = StartCoroutine(DestructionTimer());
 	}
 
+    /// <summary>
+    /// Aktualisiert die Position und prüft auf Kollisionen
+    /// </summary>
 	private void Update () {
         float currentSpace = -raySpacing;
         for (int i = 0; i < rayCount; i++)
@@ -65,12 +68,18 @@ public class BulletController : MonoBehaviour, IProjectile {
         }
     }
 
+    /// <summary>
+    /// Startet den Zerstörungstimer (20 Sekunden)
+    /// </summary>
     private IEnumerator DestructionTimer()
     {
         yield return new WaitForSeconds(20.0f);
         Destroy(this.gameObject);
     }
 
+    /// <summary>
+    /// Zerstört das übergeordnete <see cref="GameObject"/>
+    /// </summary>
     public void Die(DeathCause cause, IEntity killer)
     {
         Destroy(this.gameObject);

@@ -39,7 +39,7 @@ public class BasePlatform : Controller2D, IEntity {
             OnPlatformDestroyed.Invoke(this, new EventArgs());
         }
     }
-
+    
     public override void Die(DeathCause cause, IEntity killer)
     {
         Destroy(this.gameObject);

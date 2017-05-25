@@ -75,6 +75,9 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
         horizontalRaySpacing = bounds.size.y / (horizontalRayCount - 1);
     }
 
+    /// <summary>
+    /// Errechnet die Bewegung dieses <see cref="Controller2D"/>s anhand der übergebenen velocity
+    /// </summary>
     protected virtual void Move(Vector3 velocity)
     {
         UpdateRaycasts();
@@ -83,11 +86,11 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
         if (velocity.x != 0)
         {
             spriteRenderer.flipX = (velocity.x < 0);
-            CollisionInfo.HorizontallyCollidingObject = GetFirstHorizontalCollision(ref velocity, Mathf.Sign(velocity.x));
+            CollisionInfo.HorizontallyCollidingObject = GetFirstHorizontalCollision(ref velocity, velocity.x);
         }
         if(velocity.y != 0)
         {
-            CollisionInfo.VerticallyCollidingObject = GetFirstVerticalCollision(ref velocity, Mathf.Sign(velocity.y));
+            CollisionInfo.VerticallyCollidingObject = GetFirstVerticalCollision(ref velocity, velocity.y);
         }
         transform.Translate(velocity);
     }
@@ -95,6 +98,7 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
     protected GameObject GetFirstVerticalCollision(ref Vector3 velocity, float verticalDirection)
     {
         float rayLength = Mathf.Abs(velocity.y) + colliderInset;
+        verticalDirection = Mathf.Sign(verticalDirection);
 
         for (int i = 0; i < verticalRayCount; i++)
         {
@@ -108,68 +112,74 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
         return null;
     }
 
-    protected List<GameObject> GetAllVerticalCollisions(ref Vector3 velocity, float verticalDirection)
+    /// <summary>
+    /// Gibt das erste <see cref="GameObject"/>, das ein <see cref="Ray"/> in der Horizontalen trifft zurück
+    /// </summary>
+    /// <param name="velocity">Ausgangsbewegungskraft (Länge der Strahlen hängt davon ab)</param>
+    /// <param name="horizontalDirection">Richtung der <see cref="Ray"/>s (-1 = links, sonst rechts)</param>
+    protected GameObject GetFirstHorizontalCollision(ref Vector3 velocity, float horizontalDirection)
     {
-        List<GameObject> output = new List<GameObject>();
-        Vector3 minVelocity = velocity, tmpVelocity = velocity; ;
-        float rayLength = Mathf.Abs(velocity.y) + colliderInset;
+        float rayLength = Mathf.Abs(velocity.x) + colliderInset;
+        horizontalDirection = Mathf.Sign(horizontalDirection);
 
-        for (int i = 0; i < verticalRayCount; i++)
+        for (int i = 0; i < horizontalRayCount; i++)
         {
-            Vector2 rayOrigin = (verticalDirection == -1 ? raycastOrigins.BottomLeft : raycastOrigins.TopLeft) + Vector2.right * (verticalRaySpacing * i + velocity.x);
-            RaycastHit2D hit = CastRayVertically(rayOrigin, verticalDirection, collisionLayers, rayLength, ref velocity);
-            if (hit)
+            Vector2 rayOrigin = (horizontalDirection == -1 ? raycastOrigins.BottomLeft : raycastOrigins.BottomRight) + Vector2.up * horizontalRaySpacing * i;
+            RaycastHit2D hit = CastRayHorizontally(rayOrigin, horizontalDirection, collisionLayers, rayLength, ref velocity);
+            if(hit)
             {
-                output.Add(hit.collider.gameObject);
+                return hit.collider.gameObject;
             }
-            if(velocity.magnitude < minVelocity.magnitude)
-            {
-                minVelocity = velocity;
-            }
-            velocity = tmpVelocity;
         }
-        velocity = minVelocity;
-        return output;
+        return null;
     }
 
-    private RaycastHit2D CastRayVertically(Vector2 origin, float verticalDirection, LayerMask collisionLayers, float rayLength, ref Vector3 velocity)
+    /// <summary>
+    /// Wirft einen <see cref="Ray"/> und gibt dessen <see cref="RaycastHit2D"/> zurück
+    /// </summary>
+    /// <param name="origin">Ursprung des <see cref="Ray"/>s</param>
+    /// <param name="horizontalDirection">Horizontale Richtung des ausgesendeten <see cref="Ray"/>s (-1 = links, 1 = rechts)</param>
+    /// <param name="collisionLayers"><see cref="LayerMask"/>s, mit denen der <see cref="Ray"/> kollidieren kann</param>
+    /// <param name="rayLength">Länge des ausgesendeten <see cref="Ray"/>s</param>
+    /// <param name="velocity">Bewegungsrichtung, die in der Funktion abgeändert wird, wenn der ausgesendete <see cref="Ray"/> auf ein Objekt trifft</param>
+    private RaycastHit2D CastRayHorizontally(Vector2 origin, float horizontalDirection, LayerMask collisionLayers, float rayLength, ref Vector3 velocity)
     {
-        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.up * verticalDirection, rayLength, collisionLayers);
-        Debug.DrawRay(origin, Vector2.up * verticalDirection * rayLength, Color.green);
+        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.right * horizontalDirection, rayLength, collisionLayers);
+        Debug.DrawRay(origin, Vector2.right * horizontalDirection * rayLength, Color.green);
 
         if(hit)
         {
-            velocity.y = (hit.distance - colliderInset) * verticalDirection;
-            rayLength = hit.distance;
-            CollisionInfo.IsCollidingAbove = (verticalDirection == 1);
-            CollisionInfo.IsCollidingBelow = (verticalDirection == -1);
+            velocity.x = (hit.distance - colliderInset) * horizontalDirection;
+            rayLength = hit.distance; //TODO: benötigt?
+            CollisionInfo.IsCollidingRight = (horizontalDirection == 1);
+            CollisionInfo.IsCollidingLeft = (horizontalDirection == -1);
         }
 
         return hit;
     }
 
-    protected GameObject GetFirstHorizontalCollision(ref Vector3 velocity, float horizontalDirection)
+    /// <summary>
+    /// Wirft einen <see cref="Ray"/> und gibt dessen <see cref="RaycastHit2D"/> zurück
+    /// </summary>
+    /// <param name="origin">Ursprung des <see cref="Ray"/>s</param>
+    /// <param name="verticalDirection">Vertikale Richtung des ausgesendeten <see cref="Ray"/>s (-1 = unten, 1 = oben)</param>
+    /// <param name="collisionLayers"><see cref="LayerMask"/>s, mit denen der <see cref="Ray"/> kollidieren kann</param>
+    /// <param name="rayLength">Länge des ausgesendeten <see cref="Ray"/>s</param>
+    /// <param name="velocity">Bewegungsrichtung, die in der Funktion abgeändert wird, wenn der ausgesendete <see cref="Ray"/> auf ein Objekt trifft</param>
+    private RaycastHit2D CastRayVertically(Vector2 origin, float verticalDirection, LayerMask collisionLayers, float rayLength, ref Vector3 velocity)
     {
-        float rayLength = Mathf.Abs(velocity.x) + colliderInset;
+        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.up * verticalDirection, rayLength, collisionLayers);
+        Debug.DrawRay(origin, Vector2.up * verticalDirection * rayLength, Color.green);
 
-        for(int i = 0; i < horizontalRayCount; i++)
+        if (hit)
         {
-            Vector2 rayOrigin = (horizontalDirection == -1 ? raycastOrigins.BottomLeft : raycastOrigins.BottomRight) + Vector2.up * horizontalRaySpacing * i;
-            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * horizontalDirection, rayLength, collisionLayers);
-
-            Debug.DrawRay(rayOrigin, Vector2.right * horizontalDirection * rayLength, Color.green);
-
-            if(hit)
-            {
-                velocity.x = (hit.distance - colliderInset) * horizontalDirection;
-                rayLength = hit.distance;
-                CollisionInfo.IsCollidingRight = (horizontalDirection == 1);
-                CollisionInfo.IsCollidingLeft = (horizontalDirection == -1);
-
-                return hit.collider.gameObject;
-            }
+            velocity.y = (hit.distance - colliderInset) * verticalDirection;
+            rayLength = hit.distance; //TODO: benötigt?
+            CollisionInfo.IsCollidingAbove = (verticalDirection == 1);
+            CollisionInfo.IsCollidingBelow = (verticalDirection == -1);
         }
-        return null;
+
+        return hit;
     }
 
     public abstract void Die(DeathCause cause, IEntity killer);

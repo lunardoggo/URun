@@ -1,8 +1,10 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class FallingPlatform : BasePlatform {
+
+    public event EventHandler<EventArgs> OnPlatfromFalling;
 
     [SerializeField]
     private bool onlyFallOnAboveCollision = true;
@@ -12,17 +14,20 @@ public class FallingPlatform : BasePlatform {
 
     private Coroutine fallLaterRoutine = null;
 
-
     protected override void Start () {
         base.Start();
 	}
-	
-	protected override void Update () {
+
+    protected override void Update () {
         base.Update();
         UpdateRaycasts();
         CollisionInfo.Reset();
 
         FallOnAboveCollision();
+        if (!onlyFallOnAboveCollision)
+        {
+            FallOnCollision();
+        }
         if (applyGravity)
         {
             Vector3 lastPosition = transform.position;
@@ -30,15 +35,11 @@ public class FallingPlatform : BasePlatform {
             Move(currentVelocity * Time.deltaTime);
             deltaPosition = transform.position - lastPosition;
         }
-        else
-        {
-            if (!onlyFallOnAboveCollision)
-            {
-                FallOnCollision();
-            }
-        }
 	}
 
+    /// <summary>
+    /// Beim Zerstören wird die <see cref="fallLaterRoutine"/> angehalten und aus dem Speicher entfernt, falls sie noch existiert
+    /// </summary>
     protected override void OnDestroy()
     {
         base.OnDestroy();
@@ -47,39 +48,59 @@ public class FallingPlatform : BasePlatform {
             StopCoroutine(fallLaterRoutine);
             fallLaterRoutine = null;
         }
-        
     }
 
+    /// <summary>
+    /// Wenn ein <see cref="PlayerController"/> mit dieser <see cref="FallingPlatform"/> auf der Oberseite kollidiert, wird die <see cref="fallLaterRoutine"/>-<see cref="Coroutine"/> gestartet
+    /// </summary>
     private void FallOnAboveCollision()
     {
         Vector3 up = Vector3.up * RayLength;
-        GameObject collidingObject = null;
-        if((collidingObject = GetFirstVerticalCollision(ref up, 1)) != null)
+        PlayerController player = null;
+        if (GetFirstVerticalCollision(ref up, 1).TryGetComponent(out player))
         {
-            fallLaterRoutine = StartCoroutine(FallLater());
-            PlayerController player = null;
-            if(collidingObject.TryGetComponent(out player))
+            player.transform.Translate(deltaPosition);
+            if(fallLaterRoutine == null)
             {
-                player.transform.Translate(deltaPosition);
+                fallLaterRoutine = StartCoroutine(FallLater());
             }
         }
     }
 
+    /// <summary>
+    /// Sorgt dafür, dass diese <see cref="FallingPlatform"/> nach Ablauf des Timers fällt
+    /// </summary>
     private IEnumerator FallLater()
     {
+        Debug.Log("fall");
         yield return new WaitForSeconds(fallDelay);
         applyGravity = true;
+        if(OnPlatfromFalling != null)
+        {
+            OnPlatfromFalling.Invoke(this, new EventArgs());
+        }
     }
 
+    /// <summary>
+    /// Wein ein <see cref="PlayerController"/> 
+    /// </summary>
     private void FallOnCollision()
     {
         Vector3 left = Vector3.left * RayLength;
         Vector3 right = Vector3.right * RayLength;
         Vector3 down = Vector3.down * RayLength;
 
-        if(GetFirstHorizontalCollision(ref right, 1) != null || GetFirstHorizontalCollision(ref left, -1) != null || GetFirstVerticalCollision(ref down, -1) != null)
+        PlayerController player = null;
+        //Nicht oben, da dies schon in Update aufgerufen wird
+        if(   GetFirstHorizontalCollision(ref right, 1).TryGetComponent(out player) 
+           || GetFirstHorizontalCollision(ref left, -1).TryGetComponent(out player) 
+           || GetFirstVerticalCollision(ref down, -1).TryGetComponent(out player))
         {
-            applyGravity = true;
+            player.transform.Translate(deltaPosition);
+            if (fallLaterRoutine == null)
+            {
+                fallLaterRoutine = StartCoroutine(FallLater());
+            }
         }
     }
 }

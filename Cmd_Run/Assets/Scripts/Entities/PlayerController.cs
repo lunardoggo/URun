@@ -31,7 +31,7 @@ public class PlayerController : Controller2D {
     private PowerUpItem currentPowerUp = null;
     private float jumpVelocity = 10.0f, horizontalVelocitySmooting = 0.0f;
     private Animator animator = null;
-    private MovingPlatformController currentPlatform;
+    private BasePlatform currentPlatform;
     private Coroutine invincibleCoroutine;
 
     protected override void Start () {
@@ -157,7 +157,7 @@ public class PlayerController : Controller2D {
 
     public override void Die(DeathCause cause, IEntity killer)
     {
-        if(invincibleCoroutine == null)
+        if(invincibleCoroutine == null || cause == DeathCause.Trigger)
         {
             GameObject.FindWithTag("GameController").GetComponent<GameController>().RespawnPlayer(true);
             currentPowerUp = null;

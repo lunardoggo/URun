@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -46,32 +46,51 @@ public class GameController : MonoBehaviour {
         }
 	}
 
+    /// <summary>
+    /// Aktualisiert das <see cref="mainCoinText"/>-Label
+    /// </summary>
     public void UpdateCoinText()
     {
         coinsText.text = statistics.PlayerCoins.ToString();
     }
 
+    /// <summary>
+    /// Aktualisiert das <see cref="healthText"/>-Label
+    /// </summary>
     public void UpdateHealthText()
     {
         healthText.text = health.ToString();
     }
 
+    /// <summary>
+    /// Aktualisiert das <see cref="powerUpText"/>-Label
+    /// </summary>
+    /// <param name="value"></param>
     public void UpdatePowerUpText(ushort value)
     {
         powerUpText.text = value + " s";
     }
 
+    /// <summary>
+    /// Fügt Gesundheit zum Spieler hinzu und aktualisiert das <see cref="healthText"/>-Label
+    /// </summary>
     public void AddHealth()
     {
         health++;
         UpdateHealthText();
     }
 
+    /// <summary>
+    /// Aktualisiert das <see cref="mainCoinText"/>-Label
+    /// </summary>
     public void UpdateMainCoinText()
     {
         mainCoinText.text = statistics.PlayerMainCoins.ToString();
     }
 
+    /// <summary>
+    /// Pausiert das Spiel oder lässt dieses weiterlaufen
+    /// </summary>
     public void SetPaused(bool paused)
     {
         if (paused != IsPaused)
@@ -91,6 +110,9 @@ public class GameController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Wenn restartLevel == false, wird der Spieler zum letzten Checkpoint zurückgesetzt, sonst wird das Level neu gestartet
+    /// </summary>
     public void RespawnPlayer(bool restartLevel)
     {
         health--;
@@ -99,7 +121,7 @@ public class GameController : MonoBehaviour {
         if (PlayerIsAlive)
         {
             player.transform.position = currentCheckpoint.transform.position;
-            foreach (PlatformSpawn spawn in PlatformSpawns)
+            foreach (PlatformSpawn spawn in PlatformSpawns.Where(_spawn => _spawn.IsDestroyed))
             {
                 spawn.SpawnPlatform();
             }

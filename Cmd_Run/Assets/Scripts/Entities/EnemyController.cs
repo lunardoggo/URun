@@ -48,6 +48,9 @@ public class EnemyController : Controller2D {
         Move(currentVelocity * Time.deltaTime);
     }
 
+    /// <summary>
+    /// Zerstört das übergeordnete <see cref="GameObject"/> und aktualisiert die Spielerstatistik
+    /// </summary>
     public override void Die(DeathCause cause, IEntity killer)
     {
         if(cause == DeathCause.JumpedApon && killer is PlayerController)

@@ -34,6 +34,9 @@ public class MovingPlatformController : BasePlatform {
         Move(Vector3.zero);
 	}
 
+    /// <summary>
+    /// Bewegt diesen <see cref="MovingPlatformController"/> auf seiner <see cref="BezierSpline"/> unabhängig von der velocity vorwärts
+    /// </summary>
     protected override void Move(Vector3 velocity)
     {
         UpdateRaycasts();
@@ -75,6 +78,9 @@ public class MovingPlatformController : BasePlatform {
         }
     }
 
+    /// <summary>
+    /// Wenn das Ende der <see cref="BezierSpline"/> erreicht wurde, wird eine Aktion abhängig von <see cref="movementMode"/> ausgelöst
+    /// </summary>
     private void PathEnd()
     {
         switch(movementMode)
@@ -83,7 +89,6 @@ public class MovingPlatformController : BasePlatform {
                 move = false;
                 applyGravity = false;
                 currentVelocity = Vector3.zero;
-
                 break;
             case PlatformMovementMode.Loop:
                 followProgress -= 1.0f;
