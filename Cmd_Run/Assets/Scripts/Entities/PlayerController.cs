@@ -14,9 +14,6 @@ public class PlayerController : Controller2D {
     [SerializeField]
     [Range(0.01f, 100.0f)]
     private float jumpTimeToTop = 0.3f;
-    /*[SerializeField]
-    [Range(0.01f, 100.0f)]
-    private float groundAccelerationTime = 0.1f;*/
     [SerializeField]
     [Range(0.01f, 100.0f)]
     private float airAccelerationTime = 0.2f;
@@ -112,6 +109,7 @@ public class PlayerController : Controller2D {
         if (Input.GetKeyDown(KeyCode.Space) && CollisionInfo.IsCollidingBelow)
         {
             Jump(jumpVelocity);
+            currentPlatform = null;
         }
 
         float horizontalTargetVelocity = inputX * movementSpeed;

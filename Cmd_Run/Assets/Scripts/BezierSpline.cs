@@ -40,7 +40,7 @@ public class BezierSpline : MonoBehaviour {
             tParam -= i;
             i *= 3;
         }
-        return transform.TransformPoint(GetPoint(nodes[i], nodes[i + 1], nodes[i + 2], nodes[i + 3], tParam));
+        return GetPoint(nodes[i], nodes[i + 1], nodes[i + 2], nodes[i + 3], tParam);
     }
 
     /// <summary>

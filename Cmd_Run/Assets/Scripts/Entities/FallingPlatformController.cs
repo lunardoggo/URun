@@ -2,7 +2,7 @@
 using UnityEngine;
 using System;
 
-public class FallingPlatform : BasePlatform {
+public class FallingPlatformController : BasePlatform {
 
     public event EventHandler<EventArgs> OnPlatfromFalling;
 
@@ -51,7 +51,7 @@ public class FallingPlatform : BasePlatform {
     }
 
     /// <summary>
-    /// Wenn ein <see cref="PlayerController"/> mit dieser <see cref="FallingPlatform"/> auf der Oberseite kollidiert, wird die <see cref="fallLaterRoutine"/>-<see cref="Coroutine"/> gestartet
+    /// Wenn ein <see cref="PlayerController"/> mit dieser <see cref="FallingPlatformController"/> auf der Oberseite kollidiert, wird die <see cref="fallLaterRoutine"/>-<see cref="Coroutine"/> gestartet
     /// </summary>
     private void FallOnAboveCollision()
     {
@@ -68,7 +68,7 @@ public class FallingPlatform : BasePlatform {
     }
 
     /// <summary>
-    /// Sorgt dafür, dass diese <see cref="FallingPlatform"/> nach Ablauf des Timers fällt
+    /// Sorgt dafür, dass diese <see cref="FallingPlatformController"/> nach Ablauf des Timers fällt
     /// </summary>
     private IEnumerator FallLater()
     {

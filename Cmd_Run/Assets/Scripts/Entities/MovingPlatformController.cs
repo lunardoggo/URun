@@ -11,14 +11,10 @@ public class MovingPlatformController : BasePlatform {
     [SerializeField]
     private bool startOnPlayerCollision = true;
     [SerializeField]
-    private BezierSpline path;
-    [SerializeField]
-    [Range(0.01f, 20.0f)]
-    private float splineSizeMultiplier = 1.0f;
-    [SerializeField]
     [Range(-0.999999f, 0.999999f)]
     private float followProgress = 0.0f;
 
+    private BezierSpline path;
     private bool move = false, forward = true;
     private float moveSpeed = 0.0f;
 
@@ -26,7 +22,7 @@ public class MovingPlatformController : BasePlatform {
         base.Start();
         move = !startOnPlayerCollision;
         moveSpeed = Mathf.Pow(movementSpeed, -1);
-        path *= splineSizeMultiplier;
+        path = GetComponent<BezierSpline>();
 	}
 
     protected override void Update () {
@@ -63,9 +59,9 @@ public class MovingPlatformController : BasePlatform {
                 }
             }
 
-            Vector3 localPos = transform.localPosition;
-            transform.localPosition = path.GetPoint(followProgress) + originPosition;
-            deltaPosition = transform.localPosition - localPos;
+            Vector3 position = transform.position;
+            transform.position = path.GetPoint(followProgress) + originPosition;
+            deltaPosition = transform.position - position;
         }
         PlayerController player = null;
         if(GetFirstVerticalCollision(ref up, 1).TryGetComponent(out player))

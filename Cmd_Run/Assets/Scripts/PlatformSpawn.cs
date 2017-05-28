@@ -39,9 +39,9 @@ public class PlatformSpawn : MonoBehaviour {
             Destroy(clone.gameObject);
         }
         clone = Instantiate(platformPrefab, transform.position, transform.rotation);
-        if(clone.GetType().Equals(typeof(FallingPlatform)))
+        if(clone.GetType().Equals(typeof(FallingPlatformController)))
         {
-            ((FallingPlatform)clone).OnPlatfromFalling += OnPlatformFalling;
+            ((FallingPlatformController)clone).OnPlatfromFalling += OnPlatformFalling;
         }
         clone.OnPlatformDestroyed += OnPlatformDestroyed;
         IsDestroyed = false;
@@ -60,17 +60,17 @@ public class PlatformSpawn : MonoBehaviour {
     }
 
     /// <summary>
-    /// Wird beim Fallen der geklonten <see cref="BasePlatform"/>/>, wenn sie dem Typ <see cref="FallingPlatform"/> entspricht, aufgerufen
+    /// Wird beim Fallen der geklonten <see cref="BasePlatform"/>/>, wenn sie dem Typ <see cref="FallingPlatformController"/> entspricht, aufgerufen
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void OnPlatformFalling(object sender, EventArgs e)
     {
-        if(sender.GetType().Equals(typeof(FallingPlatform)))
+        if(sender.GetType().Equals(typeof(FallingPlatformController)))
         {
             IsDestroyed = true;
-            ((FallingPlatform)sender).OnPlatfromFalling -= OnPlatformFalling;
-            ((FallingPlatform)sender).OnPlatformDestroyed -= OnPlatformDestroyed;
+            ((FallingPlatformController)sender).OnPlatfromFalling -= OnPlatformFalling;
+            ((FallingPlatformController)sender).OnPlatformDestroyed -= OnPlatformDestroyed;
         }
     }
 }
