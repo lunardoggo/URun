@@ -55,7 +55,7 @@ public class EnemyController : Controller2D {
     {
         if(cause == DeathCause.JumpedApon && killer is PlayerController)
         {
-            PlayerStats.Instance.AddStompedEnemy();
+            CmdRun.PlayerStatistics.AddStompedEnemy();
         }
         Destroy(this.gameObject);
     }

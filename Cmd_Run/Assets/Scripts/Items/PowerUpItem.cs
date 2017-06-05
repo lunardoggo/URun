@@ -22,7 +22,7 @@ public class PowerUpItem : MonoBehaviour, ICollectible {
     public void Start()
     {
         gameController = GameObject.FindObjectOfType<GameController>();
-        statistics = PlayerStats.Instance;
+        statistics = CmdRun.PlayerStatistics;
     }
 
     public void Cancel()

@@ -10,7 +10,7 @@ public class LifeItem : MonoBehaviour, ICollectible {
 
 	public void Start () {
         gameController = GameObject.FindObjectOfType<GameController>();
-        statistics = PlayerStats.Instance;
+        statistics = CmdRun.PlayerStatistics;
     }
 
     public void OnTriggerEnter2D(Collider2D other)
