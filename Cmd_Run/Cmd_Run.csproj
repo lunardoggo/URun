@@ -87,6 +87,7 @@
     <Compile Include="Assets\Scripts\BezierSpline.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraFollow2D.cs" />
     <Compile Include="Assets\Scripts\Checkpoint.cs" />
+    <Compile Include="Assets\Scripts\CmdRun.cs" />
     <Compile Include="Assets\Scripts\Entities\BasePlatform.cs" />
     <Compile Include="Assets\Scripts\Entities\BulletController.cs" />
     <Compile Include="Assets\Scripts\Entities\Controller2D.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="Assets\Scripts\LevelTimer.cs" />
     <Compile Include="Assets\Scripts\Menus\QuitOnClick.cs" />
     <Compile Include="Assets\Scripts\Menus\StartOnClick.cs" />
+    <Compile Include="Assets\Scripts\ObjectSerializer.cs" />
     <Compile Include="Assets\Scripts\PlatformSpawn.cs" />
     <Compile Include="Assets\Scripts\PlayerStats.cs" />
     <Compile Include="Assets\Scripts\ResetTrigger.cs" />

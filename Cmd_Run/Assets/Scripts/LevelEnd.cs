@@ -9,7 +9,7 @@ public class LevelEnd : MonoBehaviour {
 
     public void Start()
     {
-        statistics = PlayerStats.Instance;
+        statistics = CmdRun.PlayerStatistics;
     }
 
     private void OnTriggerEnter2D(Collider2D other)

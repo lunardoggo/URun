@@ -28,7 +28,7 @@ public class GameController : MonoBehaviour {
     private PlayerStats statistics;
 
 	private void Start () {
-        statistics = PlayerStats.Instance;
+        statistics = CmdRun.PlayerStatistics;
         health = 3;
         player = GameObject.FindObjectOfType<PlayerController>();
 
