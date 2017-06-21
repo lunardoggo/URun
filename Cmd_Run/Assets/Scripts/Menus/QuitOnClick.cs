@@ -6,7 +6,7 @@ public class QuitOnClick : MonoBehaviour {
 
     public void QuitGame()
     {
-        Debug.Log("Butten geklickt, Spiel beenden");
+        Debug.Log("Main-Menu: Button 'Spiel beenden' geklickt. Spiel beendet und verlassen.");
         #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
         #else

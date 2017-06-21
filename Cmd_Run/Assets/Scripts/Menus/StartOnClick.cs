@@ -10,5 +10,6 @@ public class StartOnClick : MonoBehaviour {
 	public void StartLevel()
     {
         SceneManager.LoadScene(sceneName);
+        Debug.Log("Main-Menu: Klick auf Button 'Spiel starten'. Level 1 geladen.");
     }
 }

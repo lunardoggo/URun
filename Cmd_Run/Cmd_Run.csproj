@@ -107,6 +107,7 @@
     <Compile Include="Assets\Scripts\Items\PowerUpItem.cs" />
     <Compile Include="Assets\Scripts\LevelEnd.cs" />
     <Compile Include="Assets\Scripts\LevelTimer.cs" />
+    <Compile Include="Assets\Scripts\Menus\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\Menus\QuitOnClick.cs" />
     <Compile Include="Assets\Scripts\Menus\StartOnClick.cs" />
     <Compile Include="Assets\Scripts\ObjectSerializer.cs" />
