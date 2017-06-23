@@ -30,14 +30,15 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
     protected float gravity = -9.81f;
     protected SpriteRenderer spriteRenderer;
 
+    protected BoxCollider2D BoxCollider { get; private set; }
+
     private const float colliderInset = 0.015f;
     private float horizontalRaySpacing;
     private float verticalRaySpacing;
     private RaycastOrigins2D raycastOrigins;
-    private BoxCollider2D boxCollider;
 
     protected virtual void Start () {
-        boxCollider = GetComponent<BoxCollider2D>();
+        BoxCollider = GetComponent<BoxCollider2D>();
 
         Killer = null;
         IsAlive = true;
@@ -52,12 +53,12 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
 
     protected void UpdateRaycasts()
     {
-        if(boxCollider == null)
+        if(BoxCollider == null)
         {
-            boxCollider = GetComponent<BoxCollider2D>();
+            BoxCollider = GetComponent<BoxCollider2D>();
         }
 
-        Bounds bounds = boxCollider.bounds;
+        Bounds bounds = BoxCollider.bounds;
         bounds.Expand(colliderInset * -2);
 
         raycastOrigins.BottomLeft = new Vector2(bounds.min.x, bounds.min.y);
@@ -68,7 +69,7 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
 
     private void GetRaySpacing()
     {
-        Bounds bounds = boxCollider.bounds;
+        Bounds bounds = BoxCollider.bounds;
         bounds.Expand(colliderInset * -2);
 
         verticalRaySpacing = bounds.size.x / (verticalRayCount - 1);

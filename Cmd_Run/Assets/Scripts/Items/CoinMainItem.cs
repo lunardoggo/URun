@@ -23,6 +23,7 @@ public class CoinMainItem : MonoBehaviour, ICollectible
         if (other.gameObject.CompareTag("Player"))
         {
             statistics.AddMainCoin(this);
+            gameController.CollectedMainCoin();
             gameController.UpdateMainCoinText();
             Destroy(this.gameObject);
         }

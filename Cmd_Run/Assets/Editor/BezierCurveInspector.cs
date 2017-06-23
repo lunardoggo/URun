@@ -16,7 +16,7 @@ public class BezierSplineInspector : Editor {
 
     private void OnSceneGUI()
     {
-        if (spline.Nodes.Count > 0)
+        if (spline != null && spline.Nodes.Count > 0)
         {
             spline.Nodes[0] = Vector3.zero;
 

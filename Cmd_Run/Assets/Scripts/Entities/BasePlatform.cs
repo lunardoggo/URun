@@ -26,6 +26,12 @@ public class BasePlatform : Controller2D, IEntity {
     [Range(0.01f, 25.0f)]
     private float accelerationTime = 0.1f;
 
+    protected override void Start()
+    {
+        base.Start();
+        BoxCollider.size = spriteRenderer.size;
+    }
+
     protected override void Awake () {
         applyGravity = false;
         originPosition = transform.position;

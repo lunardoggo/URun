@@ -6,17 +6,26 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 
-    public Text mainCoinText;
-    public Text healthText;
-    public Text coinsText;
-    public Text powerUpText;
-    public GameObject currentCheckpoint;
-    public List<PlatformSpawn> PlatformSpawns;
-    public PlayerController player;
-    public int health;
+    [SerializeField]
+    private Text mainCoinText;
+    [SerializeField]
+    private Text healthText;
+    [SerializeField]
+    private Text coinsText;
+    [SerializeField]
+    private Text powerUpText;
+    [SerializeField]
+    private GameObject currentCheckpoint;
+    [SerializeField]
+    private List<PlatformSpawn> PlatformSpawns;
+    [SerializeField]
+    private PlayerController player;
+    [SerializeField]
+    private int health;
 
     public PlayerController Player { get; private set; }
     public bool IsPaused { get; private set; }
+    public bool HasCollectedMainCoin { get; private set; }
     public bool PlayerIsAlive { get { return health > 0; } }
     public GameObject CurrentCheckpoint
     {
@@ -25,7 +34,7 @@ public class GameController : MonoBehaviour {
     }
 
     private float lastTimeScale = 1.0f;
-    private PlayerStats statistics;
+    private PlayerStats statistics = null;
 
 	private void Start () {
         statistics = CmdRun.PlayerStatistics;
@@ -86,6 +95,14 @@ public class GameController : MonoBehaviour {
     public void UpdateMainCoinText()
     {
         mainCoinText.text = statistics.PlayerMainCoins.ToString();
+    }
+
+    /// <summary>
+    /// Setzt die Angabe, ob bereits mindestens 1 MainCoin eingesammelt wurde
+    /// </summary>
+    public void CollectedMainCoin()
+    {
+        HasCollectedMainCoin = true;
     }
 
     /// <summary>
