@@ -32,12 +32,14 @@ public class FallingPlatformController : BasePlatform {
         {
             Vector3 lastPosition = transform.position;
             currentVelocity.y += gravity * Time.deltaTime;
-            Controller2D below = null;
             Move(currentVelocity * Time.deltaTime);
+
+            Controller2D below = null;
             if (CollisionInfo.IsCollidingBelow && CollisionInfo.VerticallyCollidingObject.TryGetComponent(out below))
             {
                 below.Die(DeathCause.JumpedApon, this);
             }
+
             deltaPosition = transform.position - lastPosition;
         }
 	}
