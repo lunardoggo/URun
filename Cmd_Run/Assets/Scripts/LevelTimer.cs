@@ -18,10 +18,7 @@ public class LevelTimer : MonoBehaviour {
 
     private void OnDestroy()
     {
-        if(timer != null)
-        {
-            StopCoroutine(timer);
-        }
+        this.StopCoroutine(ref timer);
     }
 
     private IEnumerator RunTimer()

@@ -8,15 +8,21 @@ public class FallingPlatformController : BasePlatform {
 
     [SerializeField]
     private bool onlyFallOnAboveCollision = true;
-    [SerializeField]
-    [Range(0.01f, 100.0f)]
+    [SerializeField, Range(0.01f, 100.0f)]
     private float fallDelay = 3.0f;
+    [SerializeField, Range(0.05f, 5.0f)]
+    private float dissolvementSpeed = 1.0f;
 
     private Coroutine fallLaterRoutine = null;
 
+    private bool animateMaterial = false;
+    private float dissolvementState = 1.0f;
+
     protected override void Start () {
         base.Start();
-	}
+
+        dissolvementState = spriteRenderer.material.GetFloat("_DissAmo");
+    }
 
     protected override void Update () {
         base.Update();
@@ -42,6 +48,7 @@ public class FallingPlatformController : BasePlatform {
 
             deltaPosition = transform.position - lastPosition;
         }
+        Animate();
 	}
 
     /// <summary>
@@ -50,11 +57,7 @@ public class FallingPlatformController : BasePlatform {
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        if(fallLaterRoutine != null)
-        {
-            StopCoroutine(fallLaterRoutine);
-            fallLaterRoutine = null;
-        }
+        this.StopCoroutine(ref fallLaterRoutine);
     }
 
     /// <summary>
@@ -80,6 +83,7 @@ public class FallingPlatformController : BasePlatform {
     private IEnumerator FallLater()
     {
         Debug.Log("fall");
+        animateMaterial = true;
         yield return new WaitForSeconds(fallDelay);
         applyGravity = true;
         if(OnPlatfromFalling != null)
@@ -108,6 +112,15 @@ public class FallingPlatformController : BasePlatform {
             {
                 fallLaterRoutine = StartCoroutine(FallLater());
             }
+        }
+    }
+
+    private void Animate()
+    {
+        if(animateMaterial)
+        {
+            dissolvementState -= Time.deltaTime * dissolvementSpeed;
+            spriteRenderer.material.SetFloat("_DissAmo", dissolvementState);
         }
     }
 }

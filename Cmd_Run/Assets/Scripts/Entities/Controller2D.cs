@@ -6,6 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D), typeof(Rigidbody2D), typeof(SpriteRenderer))]
 public abstract class Controller2D : MonoBehaviour, IEntity {
 
+    public event EventHandler<CollisionInfoEventArgs> OnCollision;
+
     [SerializeField]
     [Range(0.000001f, 50.0f)]
     protected float movementSpeed = 4;
@@ -107,6 +109,9 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
             RaycastHit2D hit = CastRayVertically(rayOrigin, verticalDirection, collisionLayers, rayLength, ref velocity);
             if (hit)
             {
+                if (OnCollision != null)
+                    OnCollision.Invoke(this, new CollisionInfoEventArgs(hit.collider.gameObject));
+
                 return hit.collider.gameObject;
             }
         }
@@ -129,6 +134,9 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
             RaycastHit2D hit = CastRayHorizontally(rayOrigin, horizontalDirection, collisionLayers, rayLength, ref velocity);
             if(hit)
             {
+                if (OnCollision != null)
+                    OnCollision.Invoke(this, new CollisionInfoEventArgs(hit.collider.gameObject));
+
                 return hit.collider.gameObject;
             }
         }
@@ -184,6 +192,16 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
     }
 
     public abstract void Die(DeathCause cause, IEntity killer);
+}
+
+public class CollisionInfoEventArgs : EventArgs
+{
+    public CollisionInfoEventArgs(GameObject obj)
+    {
+        CollidingObject = obj;
+    }
+
+    public GameObject CollidingObject { get; private set; }
 }
 
 public struct RaycastOrigins2D

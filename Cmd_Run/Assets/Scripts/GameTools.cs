@@ -41,6 +41,21 @@ public static class GameTools {
         }
     }
 
+    /// <summary>
+    /// Stoppt eine <see cref="Coroutine"/> und setzt die Referenz der <see cref="Coroutine"/> auf null
+    /// </summary>
+    public static void StopCoroutine(this MonoBehaviour mono, ref Coroutine routine)
+    {
+        if (routine != null)
+        {
+            mono.StopCoroutine(routine);
+            routine = null;
+        }
+    }
+
+    /// <summary>
+    /// Lädt das nächste im <see cref="SceneManager"/> hinterlegte Level (nach BuildIndex)
+    /// </summary>
     public static void LoadNextLevel()
     {
         Scene activeScene = SceneManager.GetActiveScene();

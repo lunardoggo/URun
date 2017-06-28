@@ -39,6 +39,7 @@ public class PlatformSpawn : MonoBehaviour {
             Destroy(clone.gameObject);
         }
         clone = Instantiate(platformPrefab, transform.position, transform.rotation);
+        clone.transform.parent = transform;
         if(clone.GetType().Equals(typeof(FallingPlatformController)))
         {
             ((FallingPlatformController)clone).OnPlatfromFalling += OnPlatformFalling;

@@ -15,11 +15,7 @@ public class CreditsController : MonoBehaviour {
 
     private void OnDestroy()
     {
-        if(endTimerRoutine != null)
-        {
-            StopCoroutine(endTimerRoutine);
-            endTimerRoutine = null;
-        }
+        this.StopCoroutine(ref endTimerRoutine);
     }
 
     private void Update () {

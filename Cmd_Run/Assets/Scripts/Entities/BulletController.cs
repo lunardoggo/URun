@@ -61,11 +61,7 @@ public class BulletController : MonoBehaviour, IProjectile {
 
     private void OnDestroy()
     {
-        if(destructionTimer != null)
-        {
-            StopCoroutine(destructionTimer);
-            destructionTimer = null;
-        }
+        this.StopCoroutine(ref destructionTimer);
     }
 
     /// <summary>

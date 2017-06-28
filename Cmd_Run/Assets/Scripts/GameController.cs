@@ -138,7 +138,7 @@ public class GameController : MonoBehaviour {
         if (PlayerIsAlive)
         {
             player.transform.position = currentCheckpoint.transform.position;
-            foreach (PlatformSpawn spawn in PlatformSpawns.Where(_spawn => _spawn.IsDestroyed))
+            foreach (PlatformSpawn spawn in PlatformSpawns)
             {
                 spawn.SpawnPlatform();
             }

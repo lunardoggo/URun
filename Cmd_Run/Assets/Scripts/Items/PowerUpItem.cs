@@ -27,11 +27,7 @@ public class PowerUpItem : MonoBehaviour, ICollectible {
 
     public void Cancel()
     {
-        if(timer != null)
-        {
-            StopCoroutine(timer);
-            timer = null;
-        }
+        this.StopCoroutine(ref timer);
     }
 
     public void Activate()
