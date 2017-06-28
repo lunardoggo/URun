@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public static class GameTools {
 
@@ -38,5 +39,20 @@ public static class GameTools {
             output = default(T);
             return false;
         }
+    }
+
+    public static void LoadNextLevel()
+    {
+        Scene activeScene = SceneManager.GetActiveScene();
+        //Wenn buildindex der aktuellen Szene kleiner der Szenenanzahl ist (noch Szenen zum Laden vorhanden sind) -> Lade die nächste, sonst 0
+        if (SceneManager.sceneCount - 1 > activeScene.buildIndex)
+        {
+            SceneManager.LoadScene(activeScene.buildIndex + 1);
+        }
+        else
+        {
+            SceneManager.LoadScene(0);
+        }
+        SceneManager.UnloadSceneAsync(activeScene.buildIndex);
     }
 }

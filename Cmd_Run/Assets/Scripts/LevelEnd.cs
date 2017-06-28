@@ -17,18 +17,8 @@ public class LevelEnd : MonoBehaviour {
             if(controller.HasCollectedMainCoin)
             {
                 Debug.Log("next level");
-                Scene activeScene = SceneManager.GetActiveScene();
 
-                //Wenn buildindex der aktuellen Szene kleiner der Szenenanzahl ist (noch Szenen zum Laden vorhanden sind) -> Lade die nächste, sonst 0
-                if (SceneManager.sceneCount - 1 > activeScene.buildIndex)
-                {
-                    SceneManager.LoadScene(activeScene.buildIndex + 1);
-                }
-                else
-                {
-                    SceneManager.LoadScene(0);
-                }
-                SceneManager.UnloadSceneAsync(activeScene.buildIndex);
+                GameTools.LoadNextLevel();
             }
             else
             {
