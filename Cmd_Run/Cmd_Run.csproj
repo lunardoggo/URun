@@ -121,6 +121,7 @@
     <Compile Include="Assets\Scripts\ScriptableObjects\TrackList.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Shaders\BackgroundScrolling.shader" />
     <None Include="Assets\Shaders\FallingPlatformDissolvement.shader" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
   </ItemGroup>

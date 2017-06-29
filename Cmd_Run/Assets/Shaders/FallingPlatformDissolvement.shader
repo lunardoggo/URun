@@ -1,6 +1,6 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "CMD_Run/Falling Platform Dissolvement"
+Shader "URun/Falling Platform Dissolvement"
 {
     Properties
     {
