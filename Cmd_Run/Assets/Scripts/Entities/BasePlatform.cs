@@ -48,6 +48,8 @@ public class BasePlatform : Controller2D, IEntity {
     
     public override void Die(DeathCause cause, IEntity killer)
     {
+        if (cause == DeathCause.JumpedApon || cause == DeathCause.Void)
+            return;
         Destroy(this.gameObject);
     }
 }

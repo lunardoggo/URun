@@ -18,6 +18,7 @@ public class BulletController : MonoBehaviour, IProjectile {
     private float speed = 3.0f;
     [SerializeField]
     private LayerMask collisionLayers = 0;
+
     private float rayLength = 0.0f;
     private float raySpacing = 0.0f;
     private Coroutine destructionTimer = null;

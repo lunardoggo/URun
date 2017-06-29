@@ -65,7 +65,8 @@ public class DissolvingPlatform : BasePlatform {
         {
             Animate(true);
             yield return new WaitForEndOfFrame();
-        } while (dissolvementState > 0.0f);
+        } while (dissolvementState >= 0.0f);
+        Animate(true);
         BoxCollider.enabled = false;
 
         if(PlatformDissolved != null)
@@ -88,6 +89,7 @@ public class DissolvingPlatform : BasePlatform {
             yield return new WaitForEndOfFrame();
         } while (dissolvementState < 1.0f);
         dissolvementState = Mathf.Clamp01(dissolvementState);
+        Animate(false);
 
         BoxCollider.enabled = true;
 
@@ -116,7 +118,7 @@ public class DissolvingPlatform : BasePlatform {
         else
         {
             dissolvementState += Time.deltaTime * dissolvementSpeed * (dissolve ? -1 : 1);
-            spriteRenderer.material.SetFloat("_DissAmo", dissolvementState);
         }
+        spriteRenderer.material.SetFloat("_DissAmo", dissolvementState);
     }
 }

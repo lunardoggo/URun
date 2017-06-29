@@ -70,6 +70,8 @@ public class PlayerController : Controller2D {
 
     private void CalculateMovement(float inputX)
     {
+        bool jumpRequested = Input.GetKeyDown(KeyCode.Space) || Input.GetAxis("Vertical") > 0;
+
         if (CollisionInfo.IsCollidingAbove || CollisionInfo.IsCollidingBelow)
         {
             EnemyController enemy = null;
@@ -96,9 +98,14 @@ public class PlayerController : Controller2D {
                 this.Die(DeathCause.EnemyTouched, enemy);
             }
 
-            if (!CollisionInfo.IsCollidingBelow && !CollisionInfo.IsCollidingAbove && Input.GetKeyDown(KeyCode.Space))
+            IPushable pushable = null;
+            if (!CollisionInfo.IsCollidingBelow && !CollisionInfo.IsCollidingAbove && jumpRequested)
             {
                 WallJump();
+            }
+            else if(CollisionInfo.HorizontallyCollidingObject.TryGetComponent(out pushable))
+            {
+                pushable.Push(new Vector3(CurrentVelocity.x, 0));
             }
             else
             {
@@ -106,7 +113,7 @@ public class PlayerController : Controller2D {
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && CollisionInfo.IsCollidingBelow)
+        if (jumpRequested && CollisionInfo.IsCollidingBelow)
         {
             Jump(jumpVelocity);
             currentPlatform = null;
@@ -155,7 +162,7 @@ public class PlayerController : Controller2D {
 
     public override void Die(DeathCause cause, IEntity killer)
     {
-        if(invincibleCoroutine == null || cause == DeathCause.Trigger)
+        if(invincibleCoroutine == null || cause == DeathCause.Void)
         {
             GameObject.FindWithTag("GameController").GetComponent<GameController>().RespawnPlayer(true);
             currentPowerUp = null;

@@ -7,6 +7,8 @@ Shader "CMD_Run/Falling Platform Dissolvement"
         _MainTex("Texture", 2D) = "white" {}
         _DissMap("Dissolvement Map", 2D) = "white" {}
         _DissAmo("Dissolvement Amount", Range(0.0, 1.0)) = 1.0
+        _Strength ("Border Strength", Range(0.0, 0.2)) = 0.05
+        _Tint ("Border Tint", COLOR) = (1.0, 1.0, 1.0, 1.0)
     }
     
     SubShader
@@ -33,6 +35,8 @@ Shader "CMD_Run/Falling Platform Dissolvement"
             //Variablen deklarationen
             sampler2D _MainTex;
             sampler2D _DissMap;
+            float4 _Tint;
+            float _Strength;
             float _DissAmo;
             
             //structs
@@ -66,8 +70,11 @@ Shader "CMD_Run/Falling Platform Dissolvement"
                 fixed4 color = tex2D(_MainTex, i.uv);
                 float dissolvement = (color.a - tex2D(_DissMap, i.uv).r) - _DissAmo;
                 
-                if(dissolvement > 0.0)
+                if(dissolvement > _Strength || _DissAmo == 0.0)
                     discard;
+                else if(dissolvement > 0.0)
+                    color = _Tint;
+                
                 return color;
             }
             

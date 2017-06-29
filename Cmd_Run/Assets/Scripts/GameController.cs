@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(AudioSource))]
 public class GameController : MonoBehaviour {
 
     [SerializeField]
@@ -22,6 +23,8 @@ public class GameController : MonoBehaviour {
     private PlayerController player;
     [SerializeField]
     private int health;
+    [SerializeField]
+    private TrackList tracks = null;
 
     public PlayerController Player { get; private set; }
     public bool IsPaused { get; private set; }
@@ -33,11 +36,14 @@ public class GameController : MonoBehaviour {
         set { currentCheckpoint = value; }
     }
 
+    private AudioSource musicSource = null;
     private float lastTimeScale = 1.0f;
     private PlayerStats statistics = null;
 
 	private void Start () {
         statistics = CmdRun.PlayerStatistics;
+        musicSource = GetComponent<AudioSource>();
+
         health = 3;
         player = GameObject.FindObjectOfType<PlayerController>();
 
@@ -53,7 +59,13 @@ public class GameController : MonoBehaviour {
         {
             SetPaused(!IsPaused);
         }
-	}
+
+        if (!musicSource.isPlaying && tracks.Count > 0)
+        {
+            musicSource.clip = tracks.GetRandom();
+            musicSource.Play();
+        }
+    }
 
     /// <summary>
     /// Aktualisiert das <see cref="mainCoinText"/>-Label
@@ -147,6 +159,22 @@ public class GameController : MonoBehaviour {
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             //TODO: Lose-Screen
+        }
+    }
+
+    /// <summary>
+    /// Spielt das nächste Lied in der <see cref="tracks"/> <see cref="TrackList"/> ab
+    /// </summary>
+    public void PlayNextTrack()
+    {
+        if (musicSource != null)
+        {
+            if (musicSource.isPlaying)
+            {
+                musicSource.Stop();
+            }
+            musicSource.clip = tracks.GetRandom();
+            musicSource.Play();
         }
     }
 }

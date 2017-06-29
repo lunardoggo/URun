@@ -11,7 +11,8 @@ public interface IEntity  {
 
 public enum DeathCause : byte
 {
-    Trigger = 0,
+    Void = 0,
     JumpedApon = 1,
-    EnemyTouched = 2
+    EnemyTouched = 2,
+    DeathTrigger = 3
 }

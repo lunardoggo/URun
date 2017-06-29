@@ -29,7 +29,7 @@ public class ResetTrigger : MonoBehaviour {
         IEntity entity = null;
         if (collider.gameObject.TryGetComponent(out entity))
         {
-            entity.Die(DeathCause.Trigger, null);
+            entity.Die(DeathCause.Void, null);
         }
         else
         {

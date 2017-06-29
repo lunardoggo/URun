@@ -58,7 +58,7 @@ public sealed class PlayerStats : ISerializable {
         info.AddValue("StompedEnemies", StompedEnemies);
         info.AddValue("PlayerDeaths", PlayerDeaths);
         info.AddValue("PlayerPoints", PlayerPoints);
-        info.AddValue("PlayerCoins", PlayerMainCoins);
+        info.AddValue("PlayerCoins", PlayerCoins);
         info.AddValue("PlayerMainCoins", PlayerMainCoins);
     }
 

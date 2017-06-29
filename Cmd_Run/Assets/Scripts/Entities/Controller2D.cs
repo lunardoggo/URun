@@ -132,7 +132,7 @@ public abstract class Controller2D : MonoBehaviour, IEntity {
         {
             Vector2 rayOrigin = (horizontalDirection == -1 ? raycastOrigins.BottomLeft : raycastOrigins.BottomRight) + Vector2.up * horizontalRaySpacing * i;
             RaycastHit2D hit = CastRayHorizontally(rayOrigin, horizontalDirection, collisionLayers, rayLength, ref velocity);
-            if(hit)
+            if(hit && hit.collider.gameObject != this.gameObject)
             {
                 if (OnCollision != null)
                     OnCollision.Invoke(this, new CollisionInfoEventArgs(hit.collider.gameObject));
