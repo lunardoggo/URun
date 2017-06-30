@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Tracklist", menuName = "Cmd_Run/Tracklist", order = 2)]
+[CreateAssetMenu(fileName = "Tracklist", menuName = "URun/Tracklist", order = 2)]
 public class TrackList : ScriptableObject
 {
 
