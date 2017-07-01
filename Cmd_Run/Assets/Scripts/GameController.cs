@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Linq;
+using UnityEngine;
+using System;
 
 [RequireComponent(typeof(AudioSource))]
 public class GameController : MonoBehaviour {
@@ -16,7 +17,7 @@ public class GameController : MonoBehaviour {
     [SerializeField]
     private Text powerUpText;
     [SerializeField]
-    private GameObject currentCheckpoint;
+    private Checkpoint currentCheckpoint;
     [SerializeField]
     private List<PlatformSpawn> PlatformSpawns;
     [SerializeField]
@@ -26,14 +27,24 @@ public class GameController : MonoBehaviour {
     [SerializeField]
     private TrackList tracks = null;
 
+    public event EventHandler<CheckpointEventArgs> OnCheckpointChanged;
+
     public PlayerController Player { get; private set; }
     public bool IsPaused { get; private set; }
     public bool HasCollectedMainCoin { get; private set; }
     public bool PlayerIsAlive { get { return health > 0; } }
-    public GameObject CurrentCheckpoint
+    public Checkpoint CurrentCheckpoint
     {
         get { return currentCheckpoint; }
-        set { currentCheckpoint = value; }
+        set
+        {
+            if (value != null && currentCheckpoint != value)
+            {
+                currentCheckpoint = value;
+                if (OnCheckpointChanged != null)
+                    OnCheckpointChanged.Invoke(this, new CheckpointEventArgs(value));
+            }
+        }
     }
 
     private AudioSource musicSource = null;
@@ -150,15 +161,14 @@ public class GameController : MonoBehaviour {
         if (PlayerIsAlive)
         {
             player.transform.position = currentCheckpoint.transform.position;
-            foreach (PlatformSpawn spawn in PlatformSpawns)
+            foreach (PlatformSpawn spawn in PlatformSpawns.Where(_spawn => _spawn != null))
             {
                 spawn.SpawnPlatform();
             }
         }
         else
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            //TODO: Lose-Screen
+            SceneManager.LoadScene(0);
         }
     }
 

@@ -60,7 +60,7 @@ public static class GameTools {
     {
         Scene activeScene = SceneManager.GetActiveScene();
         //Wenn buildindex der aktuellen Szene kleiner der Szenenanzahl ist (noch Szenen zum Laden vorhanden sind) -> Lade die nächste, sonst 0
-        if (SceneManager.sceneCount - 1 > activeScene.buildIndex)
+        if (SceneManager.sceneCountInBuildSettings - 1 > activeScene.buildIndex)
         {
             SceneManager.LoadScene(activeScene.buildIndex + 1);
         }

@@ -90,7 +90,7 @@ public class PlayerController : Controller2D {
                 currentVelocity.y = 0;
             }
         }
-        if (CollisionInfo.IsCollidingRight || CollisionInfo.IsCollidingLeft)
+        if ((CollisionInfo.IsCollidingRight || CollisionInfo.IsCollidingLeft))
         {
             EnemyController enemy = null;
             if (CollisionInfo.HorizontallyCollidingObject.TryGetComponent(out enemy))
@@ -99,7 +99,7 @@ public class PlayerController : Controller2D {
             }
 
             IPushable pushable = null;
-            if (!CollisionInfo.IsCollidingBelow && !CollisionInfo.IsCollidingAbove && jumpRequested)
+            if (jumpRequested && !CollisionInfo.IsCollidingBelow && !CollisionInfo.IsCollidingAbove && !CollisionInfo.HorizontallyCollidingObject.CompareTag("WorldBound"))
             {
                 WallJump();
             }

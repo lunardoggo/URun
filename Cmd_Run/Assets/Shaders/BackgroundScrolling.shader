@@ -1,4 +1,4 @@
-Shader "URun/Background Scrolling"
+Shader "URun/Background Scrolling Shader"
 {
     Properties
     {
