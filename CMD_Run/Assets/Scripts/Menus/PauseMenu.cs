@@ -34,6 +34,7 @@ public class PauseMenu : MonoBehaviour {
             butRect.y += ctrlHeight + 20;
             if(GUI.Button(butRect, "Level-Auswahl"))
             {
+                SceneManager.LoadScene("Levelselect");
                 ToggleTimeScale();
                 Debug.Log("Sub-Menu: Button 'Level-Auswahl' geklickt, neues Level gewählt - Akutell noch in Bearbeitung");
             }

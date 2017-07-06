@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B5A5CF20-55D3-73F5-F7F0-F17150AEE23D}</ProjectGuid>
+    <ProjectGuid>{465EB8A3-FBF4-F827-8AEC-27CAC947035B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>Assembly-CSharp</AssemblyName>
     <FileAlignment>512</FileAlignment>
@@ -78,9 +78,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Cmd_Run.Plugins.csproj">
-      <Project>{4687C1F9-9D0D-52F3-C444-B1B7577234B8}</Project>
-      <Name>Cmd_Run.Plugins</Name>
+    <ProjectReference Include="CMD_Run.Plugins.csproj">
+      <Project>{8C6CED51-8367-DE9F-5E41-88949F4AB7F9}</Project>
+      <Name>CMD_Run.Plugins</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -111,6 +111,7 @@
     <Compile Include="Assets\Scripts\LevelEnd.cs" />
     <Compile Include="Assets\Scripts\LevelTimer.cs" />
     <Compile Include="Assets\Scripts\Menus\CreditsController.cs" />
+    <Compile Include="Assets\Scripts\Menus\LevelSelector.cs" />
     <Compile Include="Assets\Scripts\Menus\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\Menus\QuitOnClick.cs" />
     <Compile Include="Assets\Scripts\Menus\StartOnClick.cs" />
