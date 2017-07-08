@@ -10,6 +10,8 @@ public class LevelSelector : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         PlayerPrefs.SetInt("Level_01", 1);
+        PlayerPrefs.Save();
+
 		if(PlayerPrefs.GetInt(sceneToLoad.ToString())==1)
         {
             //Level aktiv -> Button aktivieren

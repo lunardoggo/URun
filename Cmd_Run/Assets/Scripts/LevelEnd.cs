@@ -37,6 +37,7 @@ public class LevelEnd : MonoBehaviour {
         {
             //level noch nicht aktiv -> freischalten
             PlayerPrefs.SetInt(sceneToLoad.ToString(), 1);
+            PlayerPrefs.Save();
         }
         //scene Level_0X_M_1 -> PlayerPref -> 0 / 1
         Debug.Log("Level freigeschaltet? " + PlayerPrefs.GetInt(sceneToLoad.ToString()));

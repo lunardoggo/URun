@@ -66,11 +66,6 @@ public class GameController : MonoBehaviour {
     }
 	
 	private void Update () {
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-            SetPaused(!IsPaused);
-        }
-
         if (!musicSource.isPlaying && tracks.Count > 0)
         {
             musicSource.clip = tracks.GetRandom();
@@ -126,28 +121,6 @@ public class GameController : MonoBehaviour {
     public void CollectedMainCoin()
     {
         HasCollectedMainCoin = true;
-    }
-
-    /// <summary>
-    /// Pausiert das Spiel oder lässt dieses weiterlaufen
-    /// </summary>
-    public void SetPaused(bool paused)
-    {
-        if (paused != IsPaused)
-        {
-            IsPaused = paused;
-            if (paused)
-            {
-                lastTimeScale = Time.timeScale;
-                Time.timeScale = 0;
-                //TODO: Pausen-UI einblenden
-            }
-            else
-            {
-                Time.timeScale = lastTimeScale;
-                //TODO: Pausen-UI ausblenden
-            }
-        }
     }
 
     /// <summary>

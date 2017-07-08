@@ -70,7 +70,7 @@ public class PlayerController : Controller2D {
 
     private void CalculateMovement(float inputX)
     {
-        bool jumpRequested = Input.GetKeyDown(KeyCode.Space) || Input.GetAxis("Vertical") > 0;
+        bool jumpRequested = Input.GetButtonDown("Jump");
 
         if (CollisionInfo.IsCollidingAbove || CollisionInfo.IsCollidingBelow)
         {
