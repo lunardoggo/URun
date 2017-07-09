@@ -98,9 +98,12 @@
     <Compile Include="Assets\Scripts\Entities\JumpPadController.cs" />
     <Compile Include="Assets\Scripts\Entities\MovingPlatformController.cs" />
     <Compile Include="Assets\Scripts\Entities\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\Entities\TriggerActionController.cs" />
+    <Compile Include="Assets\Scripts\Entities\TriggeredController.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\GameTools.cs" />
     <Compile Include="Assets\Scripts\Interfaces\ICollectible.cs" />
+    <Compile Include="Assets\Scripts\Interfaces\IControllers.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IEntity.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IProjectile.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IPushable.cs" />

@@ -5,7 +5,7 @@ using System;
 
 public class Checkpoint : MonoBehaviour {
 
-    private GameController gameController;
+    private ILevelController gameController;
     private SpriteRenderer checkpointSprite;
 
     private void OnDestroy()
@@ -15,7 +15,7 @@ public class Checkpoint : MonoBehaviour {
     }
 
     void Start () {
-        gameController = FindObjectOfType<GameController>();
+        gameController = GameObject.FindWithTag("GameController").GetComponent<ILevelController>();
         if (gameController != null)
             gameController.OnCheckpointChanged += OnCheckpointChanged;
 

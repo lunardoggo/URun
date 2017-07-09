@@ -24,24 +24,24 @@ public class PlayerController : Controller2D {
     [Range(0.01f, 50.0f)]
     private float invincibleSeconds = 2.0f;
 
-    private GameController gameController = null;
+    private IItemController gameController = null;
     private PowerUpItem currentPowerUp = null;
-    private float jumpVelocity = 10.0f, horizontalVelocitySmooting = 0.0f;
     private Animator animator = null;
     private BasePlatform currentPlatform;
     private Coroutine invincibleCoroutine;
+    private float horizontalVelocitySmooting = 0.0f, jumpVelocity = 10.0f;
 
     protected override void Start () {
         base.Start();
 
-        gameController = FindObjectOfType<GameController>();
+        gameController = GameObject.FindWithTag("GameController").GetComponent<IItemController>();
         animator = this.gameObject.GetComponent<Animator>();
         RecalculateJumpPhysics();
 	}
 
     protected override void Update () {
         base.Update();
-        float inputX = Input.GetAxisRaw("Horizontal");
+        float inputX = WalkInputX;
 
         AnimatePlayer(inputX);
         CalculateMovement(inputX);
@@ -68,9 +68,19 @@ public class PlayerController : Controller2D {
         currentPowerUp.Activate();
     }
 
+    protected virtual bool HasJumpRequested
+    {
+        get { return Input.GetButtonDown("Jump"); }
+    }
+
+    protected virtual float WalkInputX
+    {
+        get { return Input.GetAxisRaw("Horizontal"); }
+    }
+
     private void CalculateMovement(float inputX)
     {
-        bool jumpRequested = Input.GetButtonDown("Jump");
+        bool jumpRequested = HasJumpRequested;
 
         if (CollisionInfo.IsCollidingAbove || CollisionInfo.IsCollidingBelow)
         {
@@ -139,9 +149,9 @@ public class PlayerController : Controller2D {
         currentPowerUp = null;
     }
 
-    private void UsePowerUp()
+    protected void UsePowerUp()
     {
-        gameController.UpdatePowerUpText(currentPowerUp == null ? (ushort)0 : currentPowerUp.Duration);
+        gameController.UsePowerUp(currentPowerUp);
         if (!Input.GetMouseButtonDown(0) || currentPowerUp == null)
         {
             return;
@@ -154,7 +164,7 @@ public class PlayerController : Controller2D {
         }
     }
     
-    public void Jump(float jumpVelocity)
+    public virtual void Jump(float jumpVelocity)
     {
         currentVelocity.y = jumpVelocity;
         CollisionInfo.IsCollidingBelow = false;
@@ -176,7 +186,7 @@ public class PlayerController : Controller2D {
         invincibleCoroutine = null;
     }
 
-    private void WallJump()
+    protected void WallJump()
     {
         currentVelocity.x = wallJumpVelocity * (CollisionInfo.IsCollidingRight ? -1 : 1);
         currentVelocity.y = jumpVelocity;

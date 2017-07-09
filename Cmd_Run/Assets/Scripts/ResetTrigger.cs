@@ -7,14 +7,14 @@ public class ResetTrigger : MonoBehaviour {
 
     public float yLocationCoordinate = -20.0f;
 
-    private GameController controller = null;
+    private ILevelController controller = null;
 
     private void Start()
     {
         GameObject gameController = GameObject.FindWithTag("GameController");
-        if (gameController.GetComponent<GameController>() != null)
+        if (gameController.GetComponent<ILevelController>() != null)
         {
-            controller = gameController.GetComponent<GameController>();
+            controller = gameController.GetComponent<ILevelController>();
         }
         GetComponent<Collider2D>().isTrigger = true;
     }

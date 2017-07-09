@@ -53,21 +53,9 @@ public static class GameTools {
         }
     }
 
-    /// <summary>
-    /// Lädt das nächste im <see cref="SceneManager"/> hinterlegte Level (nach BuildIndex)
-    /// </summary>
-    public static void LoadNextLevel()
+    public static void LoadMainMenu()
     {
-        Scene activeScene = SceneManager.GetActiveScene();
-        //Wenn buildindex der aktuellen Szene kleiner der Szenenanzahl ist (noch Szenen zum Laden vorhanden sind) -> Lade die nächste, sonst 0
-        if (SceneManager.sceneCountInBuildSettings - 1 > activeScene.buildIndex)
-        {
-            SceneManager.LoadScene(activeScene.buildIndex + 1);
-        }
-        else
-        {
-            SceneManager.LoadScene(0);
-        }
-        SceneManager.UnloadSceneAsync(activeScene.buildIndex);
+        SceneManager.LoadScene("MainMenu");
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
     }
 }

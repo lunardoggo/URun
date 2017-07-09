@@ -5,20 +5,17 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class LifeItem : MonoBehaviour, ICollectible {
 
-    private GameController gameController;
-    private PlayerStats statistics;
+    private IItemController controller;
 
 	public void Start () {
-        gameController = GameObject.FindObjectOfType<GameController>();
-        statistics = CmdRun.PlayerStatistics;
+        controller = GameObject.FindWithTag("GameController").GetComponent<IItemController>();
     }
 
     public void OnTriggerEnter2D(Collider2D other)
     {
         if(other.gameObject.CompareTag("Player"))
         {
-            //TODO: Leben hinzufügen
-            gameController.AddHealth();
+            controller.AddHealth();
             Destroy(this.gameObject);
         }
     }

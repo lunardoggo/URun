@@ -6,7 +6,7 @@ using UnityEngine;
 using System;
 
 [RequireComponent(typeof(AudioSource))]
-public class GameController : MonoBehaviour {
+public class GameController : MonoBehaviour, IItemController, ILevelController, IMusicController {
 
     [SerializeField]
     private Text mainCoinText;
@@ -30,7 +30,6 @@ public class GameController : MonoBehaviour {
     public event EventHandler<CheckpointEventArgs> OnCheckpointChanged;
 
     public PlayerController Player { get; private set; }
-    public bool IsPaused { get; private set; }
     public bool HasCollectedMainCoin { get; private set; }
     public bool PlayerIsAlive { get { return health > 0; } }
     public Checkpoint CurrentCheckpoint
@@ -74,28 +73,24 @@ public class GameController : MonoBehaviour {
     }
 
     /// <summary>
-    /// Aktualisiert das <see cref="mainCoinText"/>-Label
-    /// </summary>
-    public void UpdateCoinText()
-    {
-        coinsText.text = statistics.PlayerCoins.ToString();
-    }
-
-    /// <summary>
-    /// Aktualisiert das <see cref="healthText"/>-Label
-    /// </summary>
-    public void UpdateHealthText()
-    {
-        healthText.text = health.ToString();
-    }
-
-    /// <summary>
     /// Aktualisiert das <see cref="powerUpText"/>-Label
     /// </summary>
-    /// <param name="value"></param>
-    public void UpdatePowerUpText(ushort value)
+    public void UsePowerUp(PowerUpItem item)
     {
-        powerUpText.text = value + " s";
+        if (item != null)
+            powerUpText.text = item.Duration + " s";
+        else
+            powerUpText.text = "0 s";
+    }
+
+    /// <summary>
+    /// Fügt eine neue Münze zur Statistik hinzu
+    /// </summary>
+    /// <param name="item"></param>
+    public void AddCoin(CoinItem item)
+    {
+        statistics.AddCoin(item);
+        UpdateCoinText();
     }
 
     /// <summary>
@@ -108,19 +103,13 @@ public class GameController : MonoBehaviour {
     }
 
     /// <summary>
-    /// Aktualisiert das <see cref="mainCoinText"/>-Label
-    /// </summary>
-    public void UpdateMainCoinText()
-    {
-        mainCoinText.text = statistics.PlayerMainCoins.ToString();
-    }
-
-    /// <summary>
     /// Setzt die Angabe, ob bereits mindestens 1 MainCoin eingesammelt wurde
     /// </summary>
-    public void CollectedMainCoin()
+    public void CollectedMainCoin(CoinMainItem item)
     {
         HasCollectedMainCoin = true;
+        UpdateMainCoinText();
+        statistics.AddMainCoin(item);
     }
 
     /// <summary>
@@ -159,5 +148,20 @@ public class GameController : MonoBehaviour {
             musicSource.clip = tracks.GetRandom();
             musicSource.Play();
         }
+    }
+
+    private void UpdateMainCoinText()
+    {
+        mainCoinText.text = statistics.PlayerMainCoins.ToString();
+    }
+
+    private void UpdateCoinText()
+    {
+        coinsText.text = statistics.PlayerCoins.ToString();
+    }
+
+    private void UpdateHealthText()
+    {
+        healthText.text = health.ToString();
     }
 }

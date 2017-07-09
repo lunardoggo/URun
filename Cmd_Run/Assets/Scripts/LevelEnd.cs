@@ -3,13 +3,22 @@ using UnityEngine.SceneManagement;
 
 public class LevelEnd : MonoBehaviour {
 
-    public string sceneToLoad;
+    [SerializeField]
+    private string sceneToLoad;
+    [SerializeField, Range(0.001f, 0.25f)]
+    private float fadeSpeed = 0.01f;
 
-    private GameController controller = null;
+    private IItemController controller = null;
+    private bool fadeOut = false;
+    private float fadeProgress = 0.0f;
+    private Texture2D fadeTexture = null;
 
     public void Start()
     {
-        controller = GameObject.FindWithTag("GameController").GetComponent<GameController>();
+        controller = GameObject.FindWithTag("GameController").GetComponent<IItemController>();
+        fadeTexture = new Texture2D(1, 1);
+        fadeTexture.SetPixel(0, 0, new Color(0f, 0f, 0f, 0f));
+        fadeTexture.Apply();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -21,7 +30,7 @@ public class LevelEnd : MonoBehaviour {
                 Debug.Log("next level");
 
                 //GameTools.LoadNextLevel();
-                LoadLevel();
+                fadeOut = true;
             }
             else
             {
@@ -29,7 +38,8 @@ public class LevelEnd : MonoBehaviour {
             }
         }
     }
-    void LoadLevel()
+
+    private void LoadLevel()
     {
         SceneManager.LoadScene(sceneToLoad);
         //fortschritt speichern
@@ -41,5 +51,21 @@ public class LevelEnd : MonoBehaviour {
         }
         //scene Level_0X_M_1 -> PlayerPref -> 0 / 1
         Debug.Log("Level freigeschaltet? " + PlayerPrefs.GetInt(sceneToLoad.ToString()));
+    }
+
+    private void OnGUI()
+    {
+        if (fadeOut)
+        {
+            fadeTexture = new Texture2D(1, 1);
+            fadeTexture.SetPixel(0, 0, new Color(0f, 0f, 0f, fadeProgress));
+            fadeTexture.Apply();
+
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), fadeTexture);
+
+            if (fadeProgress >= 1.0f)
+                LoadLevel();
+            fadeProgress += fadeSpeed;
+        }
     }
 }

@@ -9,22 +9,18 @@ public class CoinMainItem : MonoBehaviour, ICollectible
     [Range(1, ushort.MaxValue)]
     public ushort points = 10;
 
-    private GameController gameController;
-    private PlayerStats statistics;
+    private IItemController controller;
 
     public void Start()
     {
-        gameController = GameObject.FindObjectOfType<GameController>();
-        statistics = CmdRun.PlayerStatistics;
+        controller = GameObject.FindWithTag("GameController").GetComponent<IItemController>();
     }
 
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            statistics.AddMainCoin(this);
-            gameController.CollectedMainCoin();
-            gameController.UpdateMainCoinText();
+            controller.CollectedMainCoin(this);
             Destroy(this.gameObject);
         }
     }

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
+using System;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class PowerUpItem : MonoBehaviour, ICollectible {
@@ -15,14 +14,12 @@ public class PowerUpItem : MonoBehaviour, ICollectible {
     [SerializeField]
     [Range(1, ushort.MaxValue)]
     private ushort powerUpDuration = 10;
-    private GameController gameController = null;
-    private PlayerStats statistics = null;
+    private IItemController controller = null;
     private Coroutine timer = null;
 
     public void Start()
     {
-        gameController = GameObject.FindObjectOfType<GameController>();
-        statistics = CmdRun.PlayerStatistics;
+        controller = GameObject.FindWithTag("GameController").GetComponent<IItemController>();
     }
 
     public void Cancel()
@@ -42,7 +39,7 @@ public class PowerUpItem : MonoBehaviour, ICollectible {
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            gameController.Player.SetPowerUp(this);
+            controller.Player.SetPowerUp(this);
             GetComponent<Renderer>().enabled = false;
             GetComponent<Collider2D>().enabled = false;
         }
