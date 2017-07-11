@@ -152,7 +152,7 @@ public class PlayerController : Controller2D {
     protected void UsePowerUp()
     {
         gameController.UsePowerUp(currentPowerUp);
-        if (!Input.GetMouseButtonDown(0) || currentPowerUp == null)
+        if (!Input.GetButtonDown("Fire1") || currentPowerUp == null)
         {
             return;
         }
